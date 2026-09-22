@@ -1,0 +1,7 @@
+com.onepiece.grandlineAPI
+com.onepiece.grandlineAPI.controller
+com.onepiece.grandlineAPI.entity
+com.onepiece.grandlineAPI.repository
+com.onepiece.grandlineAPI.service
+com.onepiece.grandlineAPI.service.impl
+com.onepiece.grandlineAPI.util
