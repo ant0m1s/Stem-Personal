@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -23,7 +22,7 @@ public class RutasProyecto {
             System.out.println("Ruta absoluta Archivo: " + archivo.toAbsolutePath());
             System.out.println("Ruta absoluta Copias: " + copias.toAbsolutePath());
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("No se pudo acceder al archivo: " + e.getMessage());
         }
     }
