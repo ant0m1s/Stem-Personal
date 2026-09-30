@@ -17,5 +17,6 @@
         "1DAM-Programacion/Java/EJ_Resueltos",
         "Proyecto_PR"
     ],
-    "livePreview.defaultPreviewPath": "/1DAM-Lenguajes-de-Marcas/Trim.2/UD4/css_cheatsheet.html"
+    "livePreview.defaultPreviewPath": "/1DAM-Lenguajes-de-Marcas/Trim.2/UD4/css_cheatsheet.html",
+    "java.debug.settings.onBuildFailureProceed": true
 }
