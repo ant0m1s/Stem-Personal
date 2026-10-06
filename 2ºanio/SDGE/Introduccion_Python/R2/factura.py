@@ -1,6 +1,6 @@
 print("Bienvenido a Factura de Servicio")
 
-cliente = input("Nombre: ")
+cliente = input("Nombre del cliente: ")
 servicio = input("Nombre del servicio: ")
 precio_texto = input("Precio unitario (nº float):")
 cantidad_texto = input("Horas de servicio (nº int): ")
