@@ -17,4 +17,3 @@ print(f"Sector 1: {ventas_tienda}")
 print(f"Sector 2: {ventas_web}")
 print(f"Sector 3: {ventas_telefono}")
 print(f"Sector mas vendedor: {maximo_vendedor}")
-
