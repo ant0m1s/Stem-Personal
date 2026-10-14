@@ -14,13 +14,9 @@ class Comercial(Empleado):
     def resumen(self):
         bonus = self.calcular_bonus()
         total = bonus + self.ventas
-        print(f"--- Ficha Técnica ---")
-        print(f"Nombre: {self.nombre}")
-        print(f"Salario: {self.salario}")
-        print(f"Ventas: {self.ventas}")
-        print(f"Bonus: {bonus}")
-        print(f"Total: {total}")
+        mensaje = f"--- Ficha Técnica ---\nNombre: {self.nombre}\nSalario: {self.salario}\nVentas: {self.ventas}\nBonus: {bonus}\nTotal: {total}"
+        return mensaje
         
 
 comercial1 = Comercial("Mateo", 1500.99, 10000)
-comercial1.resumen()
+print(comercial1.resumen())
