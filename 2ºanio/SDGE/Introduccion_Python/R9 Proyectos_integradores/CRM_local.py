@@ -3,35 +3,47 @@ from Metodos import *
 
 
 # ---------------FUNCIONES-----------------
+def comprobar_lista_vacia(lista):
+    if len(lista) == 0:
+        return False
+    else:
+        return True
+
+
 def mostrar_catalogo(catalogo):
-    mensaje = ""
-    if len(catalogo) == 0:
-        mensaje = "Catálogo vacío."
-        return mensaje
-    else:
-        print("Imprimiendo lista:\n")
+    bandera = comprobar_lista_vacia(catalogo)
+    if bandera:
+        mensaje = "Imprimiendo lista:\n"
         for linea in catalogo:
-            mensaje += f"Cliente: {linea['nombre']}\nEmail: {linea['email']}\nCiudad: {linea['ciudad']}\nEstado: {linea['activo']}\n----------------------\n"
+            mensaje += imprimir(linea)
         return mensaje
-
-
-def cambiar_estado(linea, estado):
-    mensaje = ""
-    # Darse de Alta
-    if estado:
-        if linea["activo"]:
-            mensaje = f"{linea['nombre']}: Estaba dado de alta..."
-        else:
-            linea["activo"] = True
-            mensaje = f"{linea['nombre']}: Dado de alta correctamente"
-    # Darse de Baja
     else:
-        if not linea["activo"]:
-            mensaje = f"{linea['nombre']}: Estaba dado de baja..."
+        return None
+
+
+def cambiar_estado(estado):
+    mensaje_catalogo = mostrar_catalogo(catalogo_clientes)
+    if mensaje_catalogo == "Catalógo vacío.":
+        return mensaje_catalogo
+    else:
+        print(mensaje_catalogo)
+        linea = buscar_nombre(catalogo_clientes)
+        if linea is not None:
+            if estado == 1:
+                if linea["activo"]:
+                    mensaje = f"{linea['nombre']}: Estaba dado de alta...\n"
+                else:
+                    linea["activo"] = True
+                    mensaje = f"{linea['nombre']}: Dado de alta correctamente\n"
+            else:
+                if not linea["activo"]:
+                    mensaje = f"{linea['nombre']}: Estaba dado de baja...\n"
+                else:
+                    linea["activo"] = False
+                    mensaje = f"{linea['nombre']}: Dado de baja correctamente\n"
         else:
-            linea["activo"] = False
-            mensaje = f"{linea['nombre']}: Dado de baja correctamente\n"
-    return mensaje
+            mensaje = f"{linea}: Cliente encontrado"
+        return mensaje
 
 
 def guardar_csv(catalogo, archivo):
@@ -45,10 +57,22 @@ def guardar_csv(catalogo, archivo):
     return mensaje
 
 
-def menu_respuesta(menu):
+def menu_respuesta(menu, pregunta, limite1, limite2):
     print(menu)
-    usuario = pedir_numero("Elige una opción (0-5): ", 0, 5)
+    usuario = pedir_numero(pregunta, limite1, limite2)
     return usuario
+
+
+def guardar_c(nombre, email, ciudad, activo):
+    if activo == "S":
+        activo = True
+    else:
+        activo = False
+
+    catalogo_clientes.append(
+        {"nombre": nombre, "email": email, "ciudad": ciudad, "activo": activo}
+    )
+    return "Añadido correctamente"
 
 
 # ------------DATOS PRUEBA--------------
@@ -87,11 +111,11 @@ catalogo_clientes.append(
 )
 
 # ------------MAIN--------------
-mensaje_menu = "MENÚ OPCIONES\n0. Salir\n1. Listar Clientes\n2. Darse de Alta\n3. Darse de Baja\n4. Buscar por Nombre\n5. Guardar en CSV"
+mensaje_menu = "MENÚ OPCIONES\n0. Salir\n1. Listar Clientes\n2. Crear Cliente\n3. Cambiar de estado\n4. Buscar por Nombre\n5. Guardar en CSV"
+mensaje_estado = "MENÚ ESTADO\n0. Salir\n1. Darse de alta\n2. Darse de baja"
 bandera = True
 while bandera:
-    usuario = menu_respuesta(mensaje_menu)
-
+    usuario = menu_respuesta(mensaje_menu, "Elige una opción (0-5): ", 0, 5)
     # --------------Salir
     if usuario == 0:
         print("Terminando programa...")
@@ -101,48 +125,39 @@ while bandera:
     elif usuario == 1:
         print(mostrar_catalogo(catalogo_clientes))
 
-    # --------------Darse de Alta
+    # --------------Crear Cliente
     elif usuario == 2:
-        mensaje_catalogo = mostrar_catalogo(catalogo_clientes)
-        if mensaje_catalogo == "Catalógo vacío.":
-            print(mensaje_catalogo)
-        else:
-            print(mensaje_catalogo)
-            linea = buscar_nombre(catalogo_clientes)
-            if linea is not None:
-                estado = True
-                print(cambiar_estado(linea, estado))
-            else:
-                print(f"{linea}: No encontrado")
+        print("MENÚ CREAR CLIENTE")
+        nombre = input("Nombre del Cliente: ")
+        email = input("Ingresa email: ")
+        ciudad = input("Tu ciudad: ")
+        estado = ""
+        while estado not in ("S", "N"):
+            estado = input("Estas dado de alta (S/N): ").strip().upper()
+        print(guardar_c(nombre, email, ciudad, estado))
 
-    # --------------Darse de Baja
+    # --------------Cambiar Estado (Alta o Baja)
     elif usuario == 3:
-        mensaje_catalogo = mostrar_catalogo(catalogo_clientes)
-        if mensaje_catalogo == "Catalógo vacío.":
-            print(mensaje_catalogo)
+        ele_usu = menu_respuesta(mensaje_estado, "Opción: ", 0, 2)
+        if ele_usu == 1:
+            print(cambiar_estado(ele_usu))
+        elif ele_usu == 2:
+            print(cambiar_estado(ele_usu))
         else:
-            print(mensaje_catalogo)
-            linea = buscar_nombre(catalogo_clientes)
-            if linea is not None:
-                estado = False
-                print(cambiar_estado(linea, estado))
-            else:
-                print(f"{linea}: No encontrado")
+            print("Saliendo...")
 
     # --------------Buscar por Nombre
     elif usuario == 4:
         mensaje_catalogo = mostrar_catalogo(catalogo_clientes)
-        if mensaje_catalogo == "Catalógo vacío.":
+        if mostrar_catalogo(catalogo_clientes):
             print(mensaje_catalogo)
+            cliente = buscar_nombre(catalogo_clientes)
+            if cliente is not None:
+                print(imprimir(cliente))
+            else:
+                print("Cliente no encontrado")
         else:
             print(mensaje_catalogo)
-            linea = buscar_nombre(catalogo_clientes)
-            mensaje = ""
-            if linea is not None:
-                mensaje = f"Cliente: {linea['nombre']}\nEmail: {linea['email']}\nCiudad: {linea['ciudad']}\nEstado: {linea['activo']}"
-            else:
-                mensaje = "No se encontró ningún cliente con ese nombre"
-            print(mensaje)
 
     # --------------Guardar en CSV
     elif usuario == 5:
