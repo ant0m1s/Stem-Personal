@@ -15,9 +15,12 @@ def pedir_numero(mensaje, limite1, limite2):
 
 def buscar_nombre(catalogo, nombre=None):
     if not nombre:
-        nombre = input("A quien buscas?: ").strip()
         cliente = None
+        nombre = input("A quien buscas?: ").strip()
         for c in catalogo:
             if nombre.lower() == (c["nombre"]).lower():
-                cliente = c
+                return c
     return cliente
+
+def imprimir(c):
+    return f"\nCliente: {c['nombre']}\nEmail: {c['email']}\nCiudad: {c['ciudad']}\nEstado: {c['activo']}\n"
