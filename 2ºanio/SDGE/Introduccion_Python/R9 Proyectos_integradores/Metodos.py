@@ -24,3 +24,8 @@ def buscar_nombre(catalogo, nombre=None):
 
 def imprimir(c):
     return f"\nCliente: {c['nombre']}\nEmail: {c['email']}\nCiudad: {c['ciudad']}\nEstado: {c['activo']}\n"
+
+def menu_respuesta(menu, pregunta, limite1, limite2):
+    print(menu)
+    usuario = pedir_numero(pregunta, limite1, limite2)
+    return usuario
