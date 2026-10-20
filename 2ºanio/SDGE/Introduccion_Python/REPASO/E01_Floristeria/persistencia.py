@@ -54,9 +54,9 @@ def guardar_ventas_csv(nombre_archivo, lista):
     try:
         with open(ruta_completa, mode="w", newline="", encoding="utf-8") as archivo:
             escritor = csv.writer(archivo)
-            escritor.writerow(["numero", "cliente", "codigo_p", "cantidad", "precio_u"])
+            escritor.writerow(["numero", "cliente", "cerrada", "codigo_p", "cantidad", "precio_u"])
             for v in lista:
-                if not v.lista_linea:
+                if not v.lista_lineas:
                     escritor.writerow([v.numero, v.cliente, v.cerrada, "", 0, 0.0])
                 else:
                     for l in v.lista_lineas:
@@ -129,7 +129,7 @@ def listar_ventas(lista):
 
 def buscar_p_codigo(lista, codigo):
     for p in lista:
-        if codigo.stip().lower() == p.codigo.strip().lower():
+        if codigo.strip().lower() == p.codigo.strip().lower():
             return p
 
 
