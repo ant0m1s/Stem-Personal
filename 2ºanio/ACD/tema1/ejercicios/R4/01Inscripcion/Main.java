@@ -56,11 +56,16 @@ public class Main {
                     case 4 -> {
                         System.out.print("ID: ");
                         int id = Integer.parseInt(teclado.nextLine().trim());
-                        System.out.print("Nuevas plazas: ");
-                        int plazas = Integer.parseInt(teclado.nextLine().trim());
-                        boolean cambiado = GestorInscripciones.actualizarPlazas(archivo, id, plazas);
-                        System.out.println(cambiado ? "Plazas actualizadas."
-                                : "No se modificó nada: ID inexistente o plazas negativas.");
+                        Inscripcion item = GestorInscripciones.buscar(GestorInscripciones.cargar(archivo), id);
+                        if (item != null) {
+                            System.out.print("Nuevas plazas: ");
+                            int plazas = Integer.parseInt(teclado.nextLine().trim());
+                            boolean cambiado = GestorInscripciones.actualizarPlazas(archivo, id, plazas);
+                            System.out.println(cambiado ? "Plazas actualizadas."
+                                    : "No se modificó nada: ID inexistente o plazas negativas.");
+                        } else{
+                            System.out.print("ID no encontrado.");
+                        }
                     }
                     case 5 -> {
                         System.out.print("ID a eliminar: ");

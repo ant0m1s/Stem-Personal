@@ -16,11 +16,12 @@ public class Main {
                 while (opcion != 0) {
                     System.out.println("\nARCHIVO DE EQUIPOS");
                     System.out.println("1. Listar | 2. Buscar | 3. Cambiar unidades");
-                    System.out.println("4. Guardar binario | 5. Recargar binario | 6. Exportar XML | 0. Salir");
+                    System.out.println("4. Guardar binario | 5. Recargar binario | 6. Exportar XML | 7. Importar XML | 8. Añadir Club | 0. Salir");
                     System.out.print("Opción: ");
                     try {
                         opcion = Integer.parseInt(teclado.nextLine().trim());
                         switch (opcion) {
+                            //Listar
                             case 1 -> {
                                 // EJEMPLO COMPLETO: Main muestra resultados.
                                 if (equipos.isEmpty()) {
@@ -29,6 +30,7 @@ public class Main {
                                     equipos.forEach(System.out::println);
                                 }
                             }
+                            //Filtrar por Id
                             case 2 -> {
                                 // EJEMPLO COMPLETO: consulta en memoria.
                                 for (Equipo equipo : equipos) {
@@ -39,6 +41,7 @@ public class Main {
                                 Equipo encontrado = RepositorioEquipos.buscar(equipos, id);
                                 System.out.println(encontrado == null ? "ID no encontrado." : encontrado);
                             }
+                            //Cambiar unidades, filtrando por Id
                             case 3 -> {
                                 // TODO 2.5-A: pedir ID y unidades, llamar a cambiarUnidades,
                                 // e informar al usuario desde aquí (nunca desde el repositorio).
@@ -49,6 +52,10 @@ public class Main {
                                 System.out.print("ID del equipo: ");
                                 int id = Integer.parseInt(teclado.nextLine().trim());
                                 Equipo equipo = RepositorioEquipos.buscar(equipos, id);
+                                if (equipo == null) {
+                                    System.out.println("ID no encontrado.");
+                                    break;
+                                }
                                 System.out.println("Unidades actuales: " + equipo.getUnidades());
                                 System.out.println("Nuevas unidades: ");
                                 int unidades = Integer.parseInt(teclado.nextLine().trim());
@@ -56,6 +63,7 @@ public class Main {
                                 System.out.println(cambiado ? "Cambiado en memoria. Usa la opción 4 para guardar." : "No se modificó nada");
 
                             }
+                            //Guardar binario
                             case 4 -> {
                                 // EJEMPLO COMPLETO: guardado explícito.
                                 RepositorioEquipos.guardar(binario, equipos);
@@ -72,6 +80,21 @@ public class Main {
                                 // Exporta la lista a XML.
                                 RepositorioEquipos.exportarXml(xml, equipos);
                                 System.out.println("XML exportado en " + xml);
+                            }
+                            case 7 -> {
+                                equipos = RepositorioEquipos.importarXml(xml);
+                                System.out.println("Importados " + equipos.size() + " equipos. Usa la opción 4 para guardar.");
+                            }
+                            case 8 -> {
+                                System.out.print("ID: ");
+                                int id = Integer.parseInt(teclado.nextLine().trim());
+                                System.out.print("Nombre: ");
+                                String nombre = teclado.nextLine().trim();
+                                System.out.print("Unidades: ");
+                                int unidades = Integer.parseInt(teclado.nextLine().trim());
+                                boolean anadido = RepositorioEquipos.anadir(equipos, new Equipo(id, nombre, unidades));
+                                System.out.println(anadido ? "Añadido en memoria. Usa la opción 4 para guardar."
+                                        : "No se añadió: datos no válidos o ID repetido.");
                             }
                             case 0 ->
                                 System.out.println("Hasta luego.");
