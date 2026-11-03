@@ -1,0 +1,3089 @@
+<title>Java Ficheros UD1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;600;700&display=swap">
+<style>
+  /* Layout: chuleta con pestañas por apartado del temario, buscador global y bloques de código coloreados */
+  :root {
+    --bg: #f8f6f3;
+    --surface: #ffffff;
+    --surface-alt: #f1ece6;
+    --fg: #1c1a18;
+    --fg-dim: #5f5850;
+    --accent: #b5541c;
+    --accent-light: #fbe7d9;
+    --code-bg: #1f1b18;
+    --code-fg: #ece6df;
+    --kw: #f0a46c;
+    --str: #a8d48a;
+    --type: #7cc0e8;
+    --num: #d9a7e8;
+    --comment: #8a7f74;
+    --border: #e6dfd7;
+    --tab-text: #5f5850;
+    --tab-text-active: #ffffff;
+    --ok: #2f7d4f;
+    --ok-bg: #e2f2e7;
+    --bad: #b3261e;
+    --bad-bg: #fbe4e2;
+    --warn-bg: #fff4d6;
+    --warn: #8a5a00;
+    --font-ui: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --font-code: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+    font-family: var(--font-ui);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161412; --surface: #201d1a; --surface-alt: #2a2622; --fg: #e9e3dc; --fg-dim: #a19789;
+      --accent: #f08a4b; --accent-light: #3a2618; --code-bg: #100e0c; --code-fg: #ddd6ce;
+      --comment: #776d63; --border: #332e29; --tab-text: #a19789; --tab-text-active: #161412;
+      --ok: #7fcf9b; --ok-bg: #1b3325; --bad: #f28b82; --bad-bg: #3b1d1b; --warn-bg: #3a2e12; --warn: #f2c86b;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161412; --surface: #201d1a; --surface-alt: #2a2622; --fg: #e9e3dc; --fg-dim: #a19789;
+    --accent: #f08a4b; --accent-light: #3a2618; --code-bg: #100e0c; --code-fg: #ddd6ce;
+    --comment: #776d63; --border: #332e29; --tab-text: #a19789; --tab-text-active: #161412;
+    --ok: #7fcf9b; --ok-bg: #1b3325; --bad: #f28b82; --bad-bg: #3b1d1b; --warn-bg: #3a2e12; --warn: #f2c86b;
+    color-scheme: dark;
+  }
+  body {
+    background: var(--bg); color: var(--fg);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 0 3rem;
+    max-width: 820px; margin: 0 auto; line-height: 1.55;
+  }
+  h1 { font-size: 1.6rem; font-weight: 700; margin: 1.5rem 0 0.25rem; letter-spacing: -0.02em; text-wrap: balance; }
+  .subtitle { color: var(--fg-dim); font-size: 0.85rem; margin: 0 0 1rem; }
+
+  .search { display: flex; gap: 8px; margin-bottom: 12px; }
+  .search input {
+    flex: 1; min-width: 0; font: inherit; font-size: 0.9rem; padding: 9px 12px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--fg);
+  }
+  .search input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .search-info { font-size: 0.78rem; color: var(--fg-dim); margin: -4px 0 10px; }
+
+  .tabs {
+    display: flex; flex-wrap: wrap; gap: 4px; padding-bottom: 6px; border-bottom: 2px solid var(--border);
+  }
+  .tab {
+    padding: 6px 11px; border: 1px solid var(--border); background: var(--surface); color: var(--tab-text);
+    font-family: inherit; font-size: 0.76rem; font-weight: 600; cursor: pointer; border-radius: 999px;
+    white-space: nowrap; transition: background .15s, color .15s;
+  }
+  .tab:hover { background: var(--surface-alt); }
+  .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tab.active { background: var(--accent); color: var(--tab-text-active); border-color: var(--accent); }
+  .tab .n { opacity: .6; font-family: var(--font-code); font-size: .68rem; margin-right: 4px; }
+
+  .panel { padding-top: 1.1rem; }
+  .panel-title { display: none; font-size: 1.05rem; margin: 1.4rem 0 .6rem; color: var(--accent); }
+  body.searching .panel-title { display: block; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 18px; margin-bottom: 14px; min-width: 0;
+  }
+  .card h3 { font-size: 0.95rem; font-weight: 700; margin: 0 0 8px; display: flex; align-items: center; gap: 8px; }
+  .card h3 .icon {
+    min-width: 22px; height: 22px; padding: 0 4px; border-radius: 6px; background: var(--accent-light); color: var(--accent);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 700; flex-shrink: 0;
+    font-family: var(--font-code);
+  }
+  .card p, .card li { font-size: 0.85rem; color: var(--fg-dim); margin: 4px 0; }
+  .card ul, .card ol { padding-left: 18px; margin: 6px 0; }
+  .card strong { color: var(--fg); }
+
+  pre {
+    background: var(--code-bg); color: var(--code-fg); font-family: var(--font-code);
+    font-size: 0.74rem; line-height: 1.6; padding: 12px 14px; border-radius: 8px; overflow-x: auto; margin: 8px 0;
+    tab-size: 4;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; color: inherit; font-family: inherit; }
+  code { font-family: var(--font-code); font-size: 0.77rem; background: var(--surface-alt); padding: 2px 6px; border-radius: 4px; color: var(--fg); }
+  .hljs-keyword, .hljs-literal, .hljs-meta .hljs-keyword { color: var(--kw); font-weight: 600; }
+  .hljs-string, .hljs-attr + .hljs-string { color: var(--str); }
+  .hljs-type, .hljs-title.class_, .hljs-built_in, .hljs-name { color: var(--type); }
+  .hljs-number { color: var(--num); }
+  .hljs-comment { color: var(--comment); font-style: italic; }
+  .hljs-meta { color: var(--comment); }
+  .hljs-attr { color: var(--kw); }
+  .hljs-title.function_ { color: var(--code-fg); font-weight: 600; }
+
+  .table-wrap { overflow-x: auto; margin: 8px 0; }
+  .ref-table { width: 100%; font-size: 0.8rem; border-collapse: collapse; }
+  .ref-table th {
+    text-align: left; font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--fg-dim); padding: 6px 8px; border-bottom: 2px solid var(--border);
+  }
+  .ref-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .ref-table td code { font-size: 0.72rem; }
+
+  .tip { border-left: 3px solid var(--accent); padding: 10px 14px; background: var(--accent-light);
+    border-radius: 0 8px 8px 0; margin: 10px 0; font-size: 0.82rem; color: var(--fg); }
+  .tip strong { color: var(--accent); }
+  .warn { border-left: 3px solid var(--warn); padding: 10px 14px; background: var(--warn-bg);
+    border-radius: 0 8px 8px 0; margin: 10px 0; font-size: 0.82rem; color: var(--fg); }
+  .warn strong { color: var(--warn); }
+
+  .flow { display: flex; flex-direction: column; margin: 10px 0 4px; }
+  .step { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; position: relative; }
+  .step:not(:last-child)::before { content: ""; position: absolute; top: 34px; bottom: 0; left: 16px; width: 2px; background: var(--border); }
+  .step .dot { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--tab-text-active);
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+  .step .body { padding-bottom: 14px; min-width: 0; }
+  .step .body b { display: block; font-size: 0.9rem; }
+  .step .body span { font-size: 0.8rem; color: var(--fg-dim); }
+  .branch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .pill { border-radius: 8px; padding: 8px 10px; font-size: 0.78rem; min-width: 0; }
+  .pill.ok { background: var(--ok-bg); color: var(--ok); }
+  .pill.bad { background: var(--bad-bg); color: var(--bad); }
+  .pill b { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .grid3 > div { background: var(--surface-alt); border-radius: 8px; padding: 10px 12px; min-width: 0; }
+  .grid3 h4 { margin: 0 0 6px; font-size: 0.85rem; color: var(--accent); }
+  .grid3 ol, .grid3 ul { margin: 0; padding-left: 18px; font-size: 0.78rem; color: var(--fg-dim); }
+
+  .codewrap { position: relative; }
+  .codewrap pre { padding-top: 36px; }
+  .codewrap .copy { position: absolute; top: 6px; right: 6px; z-index: 1; font: 600 0.7rem var(--font-ui); padding: 4px 9px; border-radius: 6px;
+    border: 1px solid #ffffff33; background: #ffffff1a; color: var(--code-fg); cursor: pointer; }
+  .codewrap .copy:hover { background: #ffffff33; }
+  .codewrap .copy:focus-visible { outline: 2px solid var(--accent); }
+  .fname { font-family: var(--font-code); font-size: 0.74rem; font-weight: 600; color: var(--accent); margin: 12px 0 -4px; }
+  .card .para { margin: 2px 0; }
+  #indice-bloques a { color: var(--accent); text-decoration: none; }
+  #indice-bloques a:hover { text-decoration: underline; }
+  .card { scroll-margin-top: 12px; }
+  .grp { margin: 1.6rem 0 .6rem; padding-bottom: 4px; border-bottom: 2px solid var(--accent); }
+  .grp h2 { font-size: 1.1rem; margin: 0; color: var(--accent); }
+  .grp-sub { margin: 2px 0 0; font-size: .8rem; color: var(--fg-dim); }
+  body.searching .grp { display: none; }
+  .tree { font-family: var(--font-code); font-size: 0.75rem; background: var(--surface-alt); padding: 10px 14px; border-radius: 8px; white-space: pre; overflow-x: auto; color: var(--fg); }
+  .bad-label { color: var(--bad); font-weight: 700; }
+  .ok-label { color: var(--ok); font-weight: 700; }
+  .empty { color: var(--fg-dim); font-size: .9rem; padding: 1rem 0; }
+
+  @media (max-width: 560px) { .grid3 { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) {
+    h1 { font-size: 1.35rem; }
+    pre { font-size: 0.68rem; padding: 10px 12px; }
+    .branch { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { .tab { transition: none; } }
+</style>
+
+<h1>Java · Acceso a ficheros — UD1</h1>
+<p class="subtitle">Acceso a Datos · 2.º DAM · Bloques probados para cada operación (copiar y adaptar) y todo el temario de la UD1 con buscador</p>
+
+<div class="search">
+  <input id="buscar" type="search" placeholder="Buscar en toda la chuleta: createDirectories, APPEND, instanceof…" autocomplete="off">
+</div>
+<p class="search-info" id="search-info" hidden></p>
+
+<div class="tabs" role="tablist" id="tabs">
+  <button class="tab active" data-tab="plantillas"><span class="n">⧉</span>Bloques</button>
+  <button class="tab" data-tab="cambios"><span class="n">✎</span>Cambios típicos</button>
+  <button class="tab" data-tab="flujo"><span class="n">★</span>Flujo</button>
+  <button class="tab" data-tab="teoria"><span class="n">★</span>Teoría</button>
+  <button class="tab" data-tab="python"><span class="n">★</span>Python ↔ Java</button>
+  <button class="tab" data-tab="rutas"><span class="n">2</span>Rutas y carpetas</button>
+  <button class="tab" data-tab="leer"><span class="n">3</span>Leer texto</button>
+  <button class="tab" data-tab="escribir"><span class="n">3</span>Escribir texto</button>
+  <button class="tab" data-tab="csv"><span class="n">4</span>CSV y validar</button>
+  <button class="tab" data-tab="crud"><span class="n">4</span>CRUD</button>
+  <button class="tab" data-tab="copias"><span class="n">5</span>Copias</button>
+  <button class="tab" data-tab="poo"><span class="n">6</span>Clases (POO)</button>
+  <button class="tab" data-tab="binario"><span class="n">6</span>Binario</button>
+  <button class="tab" data-tab="aleatorio"><span class="n">7</span>Acceso aleatorio</button>
+  <button class="tab" data-tab="xml"><span class="n">8</span>XML</button>
+  <button class="tab" data-tab="json"><span class="n">9</span>JSON</button>
+  <button class="tab" data-tab="repo"><span class="n">10</span>Repositorios</button>
+  <button class="tab" data-tab="teclado"><span class="n">+</span>Teclado y menú</button>
+  <button class="tab" data-tab="colecciones"><span class="n">+</span>Listas / Set / Map</button>
+  <button class="tab" data-tab="errores"><span class="n">+</span>Excepciones</button>
+  <button class="tab" data-tab="fallos"><span class="n">!</span>Fallos típicos</button>
+</div>
+
+<!-- ═══════════════ PLANTILLAS ═══════════════ -->
+<div class="panel" id="plantillas">
+  <h2 class="panel-title">Plantillas</h2>
+  <div class="card">
+    <h3><span class="icon">i</span> Cómo usar estos bloques</h3>
+    <ol>
+      <li>Busca el <strong>método con TODO</strong> que te piden (cargar, buscar, eliminar…) y su bloque aquí.</li>
+      <li>Pulsa <strong>Copiar</strong> y pega el <strong>cuerpo</strong> dentro del método del ejercicio (la firma ya te la dan).</li>
+      <li>Cambia <strong>los nombres</strong>: <code>Producto</code> → la clase del ejercicio (Inscripcion, Equipo…), <code>getCantidad</code> → su getter, <code>"productos"</code> → sus etiquetas…</li>
+      <li>Si el ejercicio ya te da un método (por ejemplo <code>esValida</code>, <code>guardarTodo</code>, <code>crearCopiaSiExiste</code>), <strong>usa el suyo</strong> en vez de copiar el mío.</li>
+      <li>En el gestor/repositorio: <strong>sin <code>System.out</code></strong>. Devuelve <code>true/false</code>, <code>null</code> o lanza <code>IOException</code>; los mensajes van en <code>Main</code>.</li>
+    </ol>
+    <p>Todos los bloques usan esta clase de ejemplo: <code>Producto(int id, String nombre, int cantidad)</code>, y el CSV <code>id;nombre;cantidad</code>.</p>
+  </div>
+  <div class="card" id="indice-bloques">
+    <h3><span class="icon">≡</span> Índice de bloques</h3>
+    <p>Cada tarjeta tiene su código en el recuadro naranja del título. Pulsa un código para ir a él.</p>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Código</th><th>Qué es</th></tr>
+      <tr><td><a href="#b-A1"><strong>A1–A3</strong></a></td><td>Lo básico: <a href="#b-A1">imports</a>, <a href="#b-A2">clase de datos</a>, <a href="#b-A3">validar</a></td></tr>
+      <tr><td><a href="#b-B1"><strong>B1–B9</strong></a></td><td>CSV: <a href="#b-B1">cargar</a>, <a href="#b-B2">ignorar líneas malas</a>, <a href="#b-B3">guardar</a>, <a href="#b-B4">buscar</a>, <a href="#b-B5">alta</a>, <a href="#b-B6">modificar</a>, <a href="#b-B6b">modificar dos campos</a>, <a href="#b-B7">eliminar</a>, <a href="#b-B8">copia</a>, <a href="#b-B9">restaurar</a></td></tr>
+      <tr><td><a href="#b-C1"><strong>C1–C3</strong></a></td><td>Binario: <a href="#b-C1">cargar</a>, <a href="#b-C2">guardar</a>, <a href="#b-C3">cambiar en memoria</a></td></tr>
+      <tr><td><a href="#b-D1"><strong>D1–D2</strong></a></td><td>XML: <a href="#b-D1">exportar</a>, <a href="#b-D2">importar</a></td></tr>
+      <tr><td><a href="#b-E1"><strong>E1–E2</strong></a></td><td>JSON: <a href="#b-E1">pom.xml</a>, <a href="#b-E2">exportar e importar</a></td></tr>
+      <tr><td><a href="#b-F1"><strong>F1–F11</strong></a></td><td>Main: <a href="#b-F1">esqueleto</a>, <a href="#b-F2">listar</a>, <a href="#b-F3">buscar</a>, <a href="#b-F4">alta</a>, <a href="#b-F5">modificar</a>, <a href="#b-F6">eliminar</a>, <a href="#b-F7">restaurar S/N</a>, <a href="#b-F8">en memoria</a>, <a href="#b-F9">guardar/recargar</a>, <a href="#b-F10">exportar</a>, <a href="#b-F11">importar</a></td></tr>
+      <tr><td><a href="#b-G1"><strong>G1–G2</strong></a></td><td>Repositorio: <a href="#b-G1">interfaz</a>, <a href="#b-G2">clase que la implementa</a></td></tr>
+      <tr><td><a href="#b-H1"><strong>H1</strong></a></td><td><a href="#b-H1">Convertir excepciones</a> en <code>IOException</code></td></tr>
+    </table></div>
+    <p>También puedes escribir en el buscador de arriba, por ejemplo <code>binario</code> o <code>restaurar</code>.</p>
+  </div>
+  <div class="card" id="si-cambian">
+    <h3><span class="icon">?</span> Si en el examen te cambian…</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Puede cambiar</th><th>Dónde mirar</th></tr>
+      <tr><td>La clase y sus campos (Alumno, Libro, Pedido…)</td><td>Cambias nombres y getters (F2 en VS Code) · <a href="#b-A2">A2</a></td></tr>
+      <tr><td>El formato: CSV, binario, XML</td><td>Bloques <a href="#b-B1">B</a>, <a href="#b-C1">C</a> y <a href="#b-D1">D</a></td></tr>
+      <tr><td>Importar XML en lugar de exportar</td><td>Bloque <a href="#b-D2">D2</a></td></tr>
+      <tr><td>Copia en otra carpeta en vez de <code>.bak</code></td><td>Nota del bloque <a href="#b-B8">B8</a></td></tr>
+      <tr><td>Ignorar líneas malas en vez de lanzar error</td><td>Bloque <a href="#b-B2">B2</a></td></tr>
+      <tr><td>Modificar otro campo, o dos</td><td>Bloques <a href="#b-B6">B6</a> y <a href="#b-B6b">B6b</a></td></tr>
+      <tr><td>La clase no tiene setter (campo <code>final</code>) y no puedes tocarla</td><td>Bloque <a href="#b-B6b">B6b</a> (crear objeto nuevo + <code>lista.set</code>)</td></tr>
+      <tr><td>Trabajar en memoria y guardar aparte</td><td>Bloques <a href="#b-C3">C3</a>, <a href="#b-F8">F8</a> y <a href="#b-F9">F9</a></td></tr>
+      <tr><td>JSON</td><td>Bloques <a href="#b-E1">E1</a> y <a href="#b-E2">E2</a> (menos probable)</td></tr>
+      <tr><td>Una opción nueva (filtrar, sumar, ordenar)</td><td>Pestaña <strong>Cambios típicos</strong></td></tr>
+      <tr><td>Que una excepción no se pueda lanzar</td><td>Bloque <a href="#b-H1">H1</a></td></tr>
+    </table></div>
+    <div class="warn"><strong>Reglas del examen:</strong> no modifiques las clases que digan «no modificar» · no cambies las firmas de los métodos que te dan (si te piden algo extra, haz un método nuevo) · usa los métodos que te dan hechos (validar, guardar, copia) · valida <strong>antes</strong> de guardar · sin <code>System.out</code> en el gestor.</div>
+  </div>
+  <div class="grp"><h2>A · Lo básico</h2><p class="grp-sub">Imports, clase de datos y validación</p></div>
+  <div class="card" id="b-A1">
+    <h3><span class="icon">A1</span> Imports (todos los que pueden hacer falta)</h3>
+    <p class="para"><strong>Qué hace:</strong> Pega arriba del fichero y luego Ctrl+Shift+O en VS Code quita los que sobran.</p>
+    <script type="text/plain" class="code" data-lang="java">
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+</script>
+  </div>
+  <div class="card" id="b-A2">
+    <h3><span class="icon">A2</span> Clase de datos</h3>
+    <p class="para"><strong>Qué hace:</strong> Representa un registro. Constructor, getters, setters y toString.</p>
+    <p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>Nombre de la clase y del fichero (F2)</li><li>Los atributos y sus tipos</li><li>El texto de <code>toString()</code></li></ul><script type="text/plain" class="code" data-lang="java">
+import java.io.Serializable;
+
+public class Producto implements Serializable {        // "implements Serializable" solo si se guarda en binario
+    private static final long serialVersionUID = 1L;
+
+    private int id;
+    private String nombre;
+    private int cantidad;
+
+    // Constructor vacío: solo lo necesita Jackson (JSON)
+    public Producto() {
+    }
+
+    // Constructor con todos los datos
+    public Producto(int id, String nombre, int cantidad) {
+        this.id = id;
+        this.nombre = nombre;
+        this.cantidad = cantidad;
+    }
+
+    // Getters
+    public int getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    // Setters
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    // Lo que se ve al hacer System.out.println(producto)
+    @Override
+    public String toString() {
+        return "[" + id + "] " + nombre + " | cantidad: " + cantidad;
+    }
+}
+</script>
+  </div>
+  <div class="card" id="b-A3">
+    <h3><span class="icon">A3</span> Validar un objeto</h3>
+    <p class="para"><strong>Qué hace:</strong> Comprueba que los datos de un objeto son correctos.</p>
+    <p class="para"><strong>Devuelve:</strong> <code>true</code> si es válido, <code>false</code> si no</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>Las reglas: cada <code>if</code> es una regla que, si falla, devuelve <code>false</code></li></ul><script type="text/plain" class="code" data-lang="java">
+    // Devuelve true si el objeto tiene datos correctos
+    public static boolean esValido(Producto p) {
+        if (p == null) {
+            return false;
+        }
+        if (p.getId() <= 0) {
+            return false;
+        }
+        if (p.getNombre() == null || p.getNombre().isBlank()) {
+            return false;
+        }
+        if (p.getNombre().contains(";")) {
+            return false;
+        }
+        if (p.getCantidad() < 0) {
+            return false;
+        }
+        return true;
+    }
+</script>
+  </div>
+  <div class="grp"><h2>B · Fichero de texto (CSV)</h2><p class="grp-sub">Ejercicio de repaso 1 · Relación 2</p></div>
+  <div class="card" id="b-B1">
+    <h3><span class="icon">B1</span> Cargar CSV (leer y validar todo)</h3>
+    <p class="para"><strong>Qué hace:</strong> Lee el CSV, comprueba la cabecera, convierte cada línea en objeto y la valida. Si una línea está mal, lanza <code>IOException</code>.</p>
+    <p class="para"><strong>Devuelve:</strong> La lista de objetos (vacía si el archivo no existe)</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li><code>CABECERA</code> y el nº de campos (<code>!= 3</code>)</li><li>Qué campos se convierten a número y el <code>new Producto(...)</code></li><li><code>esValido</code> → el método de validar del ejercicio</li></ul><script type="text/plain" class="code" data-lang="java">
+    // Lee el CSV y devuelve la lista. Si hay una línea mal, lanza IOException.
+    public static List<Producto> cargar(Path archivo) throws IOException {
+        List<Producto> lista = new ArrayList<>();
+        Set<Integer> ids = new HashSet<>();
+
+        // 1. Si el archivo no existe, devolvemos la lista vacía
+        if (Files.notExists(archivo)) {
+            return lista;
+        }
+
+        // 2. Leemos todas las líneas
+        List<String> lineas = Files.readAllLines(archivo, StandardCharsets.UTF_8);
+
+        // 3. Comprobamos la cabecera (primera línea)
+        if (lineas.isEmpty()) {
+            throw new IOException("El archivo está vacío");
+        }
+        if (!lineas.get(0).equals(CABECERA)) {
+            throw new IOException("La cabecera no es correcta");
+        }
+
+        // 4. Recorremos las líneas desde la 1 (la 0 es la cabecera)
+        for (int i = 1; i < lineas.size(); i++) {
+            int numLinea = i + 1;
+            String linea = lineas.get(i);
+
+            // 4.1 Saltamos las líneas vacías
+            if (linea.isBlank()) {
+                continue;
+            }
+
+            // 4.2 Partimos por ; y comprobamos el número de campos
+            String[] campos = linea.split(";", -1);
+            if (campos.length != 3) {
+                throw new IOException("Línea " + numLinea + ": número de campos incorrecto");
+            }
+
+            // 4.3 Convertimos los números
+            int id;
+            int cantidad;
+            try {
+                id = Integer.parseInt(campos[0].trim());
+                cantidad = Integer.parseInt(campos[2].trim());
+            } catch (NumberFormatException e) {
+                throw new IOException("Línea " + numLinea + ": número no válido");
+            }
+            String nombre = campos[1].trim();
+
+            // 4.4 Creamos el objeto y lo validamos
+            Producto p = new Producto(id, nombre, cantidad);
+            if (!esValido(p)) {
+                throw new IOException("Línea " + numLinea + ": datos no válidos");
+            }
+
+            // 4.5 Comprobamos que el ID no esté repetido
+            if (ids.contains(id)) {
+                throw new IOException("Línea " + numLinea + ": ID repetido " + id);
+            }
+            ids.add(id);
+
+            // 4.6 Todo bien: lo añadimos
+            lista.add(p);
+        }
+
+        // 5. Devolvemos la lista
+        return lista;
+    }
+</script>
+  </div>
+  <div class="card" id="b-B2">
+    <h3><span class="icon">B2</span> Cargar CSV ignorando líneas malas</h3>
+    <p class="para"><strong>Qué hace:</strong> Variante de B1 para cuando el enunciado dice saltar las líneas incorrectas.</p>
+    <script type="text/plain" class="code" data-lang="java">
+// Si el enunciado dice "IGNORA las líneas incorrectas" (en vez de lanzar error):
+// en el bloque "Cargar CSV" cambia cada
+throw new IOException("Línea " + numLinea + ": ...");
+// por
+continue;      // salta esta línea y sigue con la siguiente
+// (y si piden avisar, antes del continue:  System.out.println("Línea " + numLinea + ": motivo");
+//  pero OJO: si el enunciado dice "sin System.out en el gestor", no lo pongas)
+</script>
+  </div>
+  <div class="card" id="b-B3">
+    <h3><span class="icon">B3</span> Guardar toda la lista en el CSV</h3>
+    <p class="para"><strong>Qué hace:</strong> Escribe la cabecera y una línea por objeto. Sustituye el contenido anterior.</p>
+    <p class="para"><strong>Devuelve:</strong> Nada (<code>void</code>)</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>La línea que une los campos con <code>;</code></li></ul><script type="text/plain" class="code" data-lang="java">
+    // Escribe toda la lista en el CSV (sustituye el contenido anterior)
+    public static void guardarTodo(Path archivo, List<Producto> lista) throws IOException {
+        // 1. Creamos la carpeta si no existe
+        Path carpeta = archivo.getParent();
+        if (carpeta != null) {
+            Files.createDirectories(carpeta);
+        }
+
+        // 2. Convertimos cada objeto en una línea de texto
+        List<String> lineas = new ArrayList<>();
+        lineas.add(CABECERA);
+        for (Producto p : lista) {
+            String linea = p.getId() + ";" + p.getNombre() + ";" + p.getCantidad();
+            lineas.add(linea);
+        }
+
+        // 3. Escribimos (sin APPEND: sustituye todo)
+        Files.write(archivo, lineas, StandardCharsets.UTF_8);
+    }
+</script>
+  </div>
+  <div class="card" id="b-B4">
+    <h3><span class="icon">B4</span> Buscar por ID</h3>
+    <p class="para"><strong>Qué hace:</strong> Recorre la lista y devuelve el que tenga ese ID.</p>
+    <p class="para"><strong>Devuelve:</strong> El objeto, o <code>null</code> si no está</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>El tipo (<code>Producto</code>)</li></ul><script type="text/plain" class="code" data-lang="java">
+    // Devuelve el objeto con ese ID, o null si no está
+    public static Producto buscar(List<Producto> lista, int id) {
+        for (Producto p : lista) {
+            if (p.getId() == id) {
+                return p;
+            }
+        }
+        return null;
+    }
+</script>
+  </div>
+  <div class="card" id="b-B5">
+    <h3><span class="icon">B5</span> Alta (añadir uno nuevo)</h3>
+    <p class="para"><strong>Qué hace:</strong> Carga, valida, comprueba que el ID no exista, añade, hace copia y guarda.</p>
+    <p class="para"><strong>Devuelve:</strong> <code>true</code> si se añadió, <code>false</code> si no</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>Nombres de clase y métodos</li></ul><script type="text/plain" class="code" data-lang="java">
+    // Añade un objeto nuevo. Devuelve false si no es válido o el ID ya existe.
+    public static boolean registrar(Path archivo, Producto nuevo) throws IOException {
+        // 1. Cargamos lo que hay
+        List<Producto> lista = cargar(archivo);
+
+        // 2. Comprobamos que es válido
+        if (!esValido(nuevo)) {
+            return false;
+        }
+
+        // 3. Comprobamos que el ID no exista ya
+        if (buscar(lista, nuevo.getId()) != null) {
+            return false;
+        }
+
+        // 4. Lo añadimos, hacemos copia y guardamos
+        lista.add(nuevo);
+        crearCopiaSiExiste(archivo);
+        guardarTodo(archivo, lista);
+        return true;
+    }
+</script>
+  </div>
+  <div class="card" id="b-B6">
+    <h3><span class="icon">B6</span> Modificar un campo</h3>
+    <p class="para"><strong>Qué hace:</strong> Comprueba el valor, busca el ID, cambia solo ese objeto, hace copia y guarda.</p>
+    <p class="para"><strong>Devuelve:</strong> <code>true</code> si se cambió, <code>false</code> si no existe o el valor no vale</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>La comprobación del valor (<code>cantidad &lt; 0</code>)</li><li>El setter (<code>setCantidad</code>)</li></ul><script type="text/plain" class="code" data-lang="java">
+    // Cambia la cantidad de un ID. Devuelve false si no existe o el valor no vale.
+    public static boolean actualizarCantidad(Path archivo, int id, int cantidad) throws IOException {
+        // 1. Comprobamos el valor nuevo
+        if (cantidad < 0) {
+            return false;
+        }
+
+        // 2. Cargamos y buscamos
+        List<Producto> lista = cargar(archivo);
+        Producto p = buscar(lista, id);
+
+        // 3. Si no existe, no tocamos nada
+        if (p == null) {
+            return false;
+        }
+
+        // 4. Cambiamos SOLO ese objeto
+        p.setCantidad(cantidad);
+
+        // 5. Copia de seguridad y guardamos todo
+        crearCopiaSiExiste(archivo);
+        guardarTodo(archivo, lista);
+        return true;
+    }
+</script>
+  </div>
+  <div class="card" id="b-B6b">
+    <h3><span class="icon">B6b</span> Modificar dos campos (o un campo sin setter)</h3>
+    <p class="para"><strong>Qué hace:</strong> Cambia el nombre y la cantidad a la vez. Como no siempre hay setter (o no puedes tocar la clase), crea un objeto nuevo con los datos cambiados y lo pone en el sitio del viejo. Valida <strong>antes</strong> de guardar.</p>
+    <p class="para"><strong>Devuelve:</strong> <code>true</code> si se cambió, <code>false</code> si no existe o los datos no valen</p>
+    <p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>Los parámetros nuevos y el <code>new Producto(...)</code> (campos que se mantienen → del objeto viejo con su getter)</li><li>Haz un método NUEVO; no cambies la firma del que te dan</li></ul>
+    <script type="text/plain" class="code" data-lang="java">
+    public static boolean actualizarNombreYCantidad(Path archivo, int id, String nombre, int cantidad) throws IOException {
+        // 1. Cargamos y buscamos
+        List<Producto> lista = cargar(archivo);
+        Producto viejo = buscar(lista, id);
+
+        // 2. Si no existe, no tocamos nada
+        if (viejo == null) {
+            return false;
+        }
+
+        // 3. Creamos uno NUEVO con los datos cambiados
+        //    (lo que no cambia se copia del viejo: viejo.getId(), viejo.getOtroCampo()...)
+        Producto nuevo = new Producto(viejo.getId(), nombre, cantidad);
+
+        // 4. Validamos ANTES de guardar
+        if (!esValido(nuevo)) {
+            return false;
+        }
+
+        // 5. Ponemos el nuevo en el sitio del viejo
+        int posicion = lista.indexOf(viejo);
+        lista.set(posicion, nuevo);
+
+        // 6. Copia de seguridad y guardamos
+        crearCopiaSiExiste(archivo);
+        guardarTodo(archivo, lista);
+        return true;
+    }
+</script>
+    <p class="para">Si la clase SÍ tiene setters y te dejan usarlos: en el paso 3 haz <code>viejo.setNombre(nombre);</code> y <code>viejo.setCantidad(cantidad);</code>, valida <code>viejo</code> y te saltas el paso 5.</p>
+  </div>
+  <div class="card" id="b-B7">
+    <h3><span class="icon">B7</span> Eliminar por ID</h3>
+    <p class="para"><strong>Qué hace:</strong> Construye una lista nueva sin ese ID. Si no estaba, no guarda nada.</p>
+    <p class="para"><strong>Devuelve:</strong> <code>true</code> si se borró, <code>false</code> si no existía</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>Nombres de clase y métodos</li></ul><script type="text/plain" class="code" data-lang="java">
+    // Borra un ID. Devuelve false si no existe (y entonces no se reescribe nada).
+    public static boolean eliminar(Path archivo, int id) throws IOException {
+        // 1. Cargamos
+        List<Producto> lista = cargar(archivo);
+
+        // 2. Construimos una lista nueva SIN ese ID
+        List<Producto> nueva = new ArrayList<>();
+        boolean encontrado = false;
+        for (Producto p : lista) {
+            if (p.getId() == id) {
+                encontrado = true;          // no lo añadimos → desaparece
+            } else {
+                nueva.add(p);
+            }
+        }
+
+        // 3. Si no estaba, no hacemos copia ni guardamos
+        if (!encontrado) {
+            return false;
+        }
+
+        // 4. Copia de seguridad y guardamos la lista nueva
+        crearCopiaSiExiste(archivo);
+        guardarTodo(archivo, nueva);
+        return true;
+    }
+</script>
+  </div>
+  <div class="card" id="b-B8">
+    <h3><span class="icon">B8</span> Crear copia de seguridad (.bak)</h3>
+    <p class="para"><strong>Qué hace:</strong> Copia <code>archivo</code> a <code>archivo.bak</code>. Llámalo justo antes de guardar.</p>
+    <p class="para"><strong>Devuelve:</strong> Nada</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>Si piden la copia en otra carpeta: <code>Path copia = Path.of("datos", "copias", "x.bak");</code> y antes <code>Files.createDirectories(copia.getParent());</code></li></ul><script type="text/plain" class="code" data-lang="java">
+    // Copia "archivo" a "archivo.bak" (si el archivo existe)
+    public static void crearCopiaSiExiste(Path archivo) throws IOException {
+        if (Files.exists(archivo)) {
+            Path copia = Path.of(archivo.toString() + ".bak");      // datos/x.csv → datos/x.csv.bak
+            Files.copy(archivo, copia, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+</script>
+  </div>
+  <div class="card" id="b-B9">
+    <h3><span class="icon">B9</span> Restaurar la copia</h3>
+    <p class="para"><strong>Qué hace:</strong> Copia el <code>.bak</code> encima del archivo. La pregunta S/N va en Main (bloque F7).</p>
+    <p class="para"><strong>Devuelve:</strong> <code>true</code> si se restauró, <code>false</code> si no hay copia</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>La ruta de la copia (igual que en B8)</li></ul><script type="text/plain" class="code" data-lang="java">
+    // Copia "archivo.bak" encima de "archivo". Devuelve false si no hay copia.
+    // (La pregunta S/N se hace en Main, aquí NO)
+    public static boolean restaurar(Path archivo) throws IOException {
+        // 1. Ruta de la copia
+        Path copia = Path.of(archivo.toString() + ".bak");
+
+        // 2. Si no hay copia, no hacemos nada
+        if (Files.notExists(copia)) {
+            return false;
+        }
+
+        // 3. Copiamos la copia encima del original
+        Files.copy(copia, archivo, StandardCopyOption.REPLACE_EXISTING);
+        return true;
+    }
+</script>
+  </div>
+  <div class="grp"><h2>C · Binario (objetos)</h2><p class="grp-sub">Ejercicio de repaso 2 · Relación 3 ej. 1, 2 y 7</p></div>
+  <div class="card" id="b-C1">
+    <h3><span class="icon">C1</span> Cargar lista desde binario</h3>
+    <p class="para"><strong>Qué hace:</strong> Lee la lista guardada, comprueba que es una lista, que cada elemento es del tipo correcto, válido y sin IDs repetidos.</p>
+    <p class="para"><strong>Devuelve:</strong> La lista (vacía si el archivo no existe)</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li><code>Producto</code> → la clase (en los dos <code>instanceof</code>)</li><li><code>esValido</code> → la validación del ejercicio (si no hay, escribe las reglas: <code>p.getId() &lt;= 0</code>…)</li></ul><script type="text/plain" class="code" data-lang="java">
+    // Lee la lista guardada en binario. Comprueba tipos, datos y duplicados.
+    public static List<Producto> cargarBinario(Path archivo) throws IOException {
+        List<Producto> lista = new ArrayList<>();
+        Set<Integer> ids = new HashSet<>();
+
+        // 1. Si no existe, lista vacía
+        if (Files.notExists(archivo)) {
+            return lista;
+        }
+
+        // 2. Abrimos y leemos UN objeto (la lista entera)
+        try (ObjectInputStream entrada = new ObjectInputStream(Files.newInputStream(archivo))) {
+            Object dato = entrada.readObject();
+
+            // 3. ¿Es una lista?
+            if (!(dato instanceof List<?> leida)) {
+                throw new IOException("El archivo no contiene una lista");
+            }
+
+            // 4. Revisamos cada elemento
+            for (Object elemento : leida) {
+                // 4.1 ¿Es del tipo correcto?
+                if (!(elemento instanceof Producto p)) {
+                    throw new IOException("Hay un elemento que no es un Producto");
+                }
+                // 4.2 ¿Tiene datos válidos?
+                if (!esValido(p)) {
+                    throw new IOException("Datos no válidos en el ID " + p.getId());
+                }
+                // 4.3 ¿ID repetido?
+                if (ids.contains(p.getId())) {
+                    throw new IOException("ID repetido: " + p.getId());
+                }
+                ids.add(p.getId());
+
+                lista.add(p);
+            }
+        } catch (ClassNotFoundException e) {
+            // Convertimos la excepción en IOException
+            throw new IOException("No se encuentra la clase: " + e.getMessage(), e);
+        }
+
+        // 5. Devolvemos la lista
+        return lista;
+    }
+</script>
+  </div>
+  <div class="card" id="b-C2">
+    <h3><span class="icon">C2</span> Guardar lista en binario</h3>
+    <p class="para"><strong>Qué hace:</strong> Guarda la lista entera como un único objeto. Nunca con APPEND.</p>
+    <p class="para"><strong>Devuelve:</strong> Nada</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>El tipo de la lista</li></ul><script type="text/plain" class="code" data-lang="java">
+    // Guarda la lista ENTERA en binario (nunca con APPEND)
+    public static void guardarBinario(Path archivo, List<Producto> lista) throws IOException {
+        // 1. Creamos la carpeta si no existe
+        Path carpeta = archivo.getParent();
+        if (carpeta != null) {
+            Files.createDirectories(carpeta);
+        }
+
+        // 2. Escribimos la lista como un solo objeto
+        try (ObjectOutputStream salida = new ObjectOutputStream(Files.newOutputStream(archivo))) {
+            salida.writeObject(new ArrayList<>(lista));
+        }
+    }
+</script>
+  </div>
+  <div class="card" id="b-C3">
+    <h3><span class="icon">C3</span> Cambiar en memoria (sin guardar)</h3>
+    <p class="para"><strong>Qué hace:</strong> Modifica un objeto de la lista que ya tienes cargada. No toca el fichero.</p>
+    <p class="para"><strong>Devuelve:</strong> <code>true</code> si se cambió, <code>false</code> si no</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>La comprobación del valor y el setter</li></ul><script type="text/plain" class="code" data-lang="java">
+    // Cambia un objeto SOLO en la lista (no guarda en disco)
+    public static boolean cambiarCantidad(List<Producto> lista, int id, int cantidad) {
+        // 1. Comprobamos el valor
+        if (cantidad < 0) {
+            return false;
+        }
+
+        // 2. Buscamos
+        Producto p = buscar(lista, id);
+        if (p == null) {
+            return false;
+        }
+
+        // 3. Cambiamos
+        p.setCantidad(cantidad);
+        return true;
+    }
+</script>
+  </div>
+  <div class="grp"><h2>D · XML</h2><p class="grp-sub">Ejercicio de repaso 2 · Relación 3 ej. 3 y 4</p></div>
+  <div class="card" id="b-D1">
+    <h3><span class="icon">D1</span> Exportar lista a XML (DOM)</h3>
+    <p class="para"><strong>Qué hace:</strong> Crea la raíz, un elemento por objeto con su atributo id y sus hijos, y lo escribe con UTF-8 y sangría.</p>
+    <p class="para"><strong>Devuelve:</strong> Nada</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li><code>"productos"</code> → nombre de la raíz</li><li><code>"producto"</code> → nombre de cada elemento</li><li>Un bloque <code>Element ... createElement / setTextContent / appendChild</code> por cada campo</li></ul><script type="text/plain" class="code" data-lang="java">
+    // Crea el XML:  <productos> <producto id="1"> <nombre>..</nombre> <cantidad>..</cantidad> </producto> ... </productos>
+    public static void exportarXml(Path archivo, List<Producto> lista) throws IOException {
+        try {
+            // 1. Documento vacío
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+
+            // 2. Raíz
+            Element raiz = doc.createElement("productos");
+            doc.appendChild(raiz);
+
+            // 3. Un elemento por cada objeto
+            for (Producto p : lista) {
+                Element producto = doc.createElement("producto");
+                producto.setAttribute("id", String.valueOf(p.getId()));
+
+                Element nombre = doc.createElement("nombre");
+                nombre.setTextContent(p.getNombre());
+                producto.appendChild(nombre);
+
+                Element cantidad = doc.createElement("cantidad");
+                cantidad.setTextContent(String.valueOf(p.getCantidad()));
+                producto.appendChild(cantidad);
+
+                raiz.appendChild(producto);
+            }
+
+            // 4. Creamos la carpeta si no existe
+            Path carpeta = archivo.getParent();
+            if (carpeta != null) {
+                Files.createDirectories(carpeta);
+            }
+
+            // 5. Escribimos el árbol en el fichero (UTF-8 y con sangría)
+            Transformer t = TransformerFactory.newInstance().newTransformer();
+            t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            t.setOutputProperty(OutputKeys.INDENT, "yes");
+            t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            t.transform(new DOMSource(doc), new StreamResult(archivo.toFile()));
+
+        } catch (ParserConfigurationException | TransformerException e) {
+            // Convertimos los errores de XML en IOException
+            throw new IOException("No se pudo exportar el XML: " + e.getMessage(), e);
+        }
+    }
+</script>
+  </div>
+  <div class="card" id="b-D2">
+    <h3><span class="icon">D2</span> Importar XML (seguro y validado)</h3>
+    <p class="para"><strong>Qué hace:</strong> Lee el XML sin DTD, convierte cada elemento en objeto, valida y detecta IDs repetidos. Si algo falla, lanza <code>IOException</code> y no devuelve nada a medias.</p>
+    <p class="para"><strong>Devuelve:</strong> La lista importada</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>Las etiquetas (<code>"producto"</code>, <code>"nombre"</code>, <code>"cantidad"</code>)</li><li>Los campos y el <code>new Producto(...)</code></li></ul><script type="text/plain" class="code" data-lang="java">
+    // Lee el XML de forma segura. Si algo está mal, lanza IOException y no devuelve nada a medias.
+    public static List<Producto> importarXml(Path archivo) throws IOException {
+        // 1. Si no existe, error
+        if (Files.notExists(archivo)) {
+            throw new IOException("No existe el archivo " + archivo);
+        }
+
+        List<Producto> temporal = new ArrayList<>();
+        Set<Integer> ids = new HashSet<>();
+
+        try {
+            // 2. Fábrica segura (sin DTD ni entidades externas)
+            DocumentBuilderFactory fabrica = DocumentBuilderFactory.newInstance();
+            fabrica.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            fabrica.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            fabrica.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            fabrica.setXIncludeAware(false);
+            fabrica.setExpandEntityReferences(false);
+
+            // 3. Leemos el documento
+            Document doc = fabrica.newDocumentBuilder().parse(archivo.toFile());
+
+            // 4. Recorremos los elementos <producto>
+            NodeList nodos = doc.getElementsByTagName("producto");
+            for (int i = 0; i < nodos.getLength(); i++) {
+                Element e = (Element) nodos.item(i);
+                int num = i + 1;
+
+                // 4.1 Comprobamos que tiene sus hijos
+                NodeList nombres = e.getElementsByTagName("nombre");
+                NodeList cantidades = e.getElementsByTagName("cantidad");
+                if (nombres.getLength() != 1 || cantidades.getLength() != 1) {
+                    throw new IOException("Elemento " + num + ": faltan campos");
+                }
+
+                // 4.2 Leemos y convertimos
+                int id;
+                int cantidad;
+                try {
+                    id = Integer.parseInt(e.getAttribute("id").trim());
+                    cantidad = Integer.parseInt(cantidades.item(0).getTextContent().trim());
+                } catch (NumberFormatException ex) {
+                    throw new IOException("Elemento " + num + ": número no válido");
+                }
+                String nombre = nombres.item(0).getTextContent().trim();
+
+                // 4.3 Validamos
+                Producto p = new Producto(id, nombre, cantidad);
+                if (!esValido(p)) {
+                    throw new IOException("Elemento " + num + ": datos no válidos");
+                }
+                if (ids.contains(id)) {
+                    throw new IOException("ID repetido: " + id);
+                }
+                ids.add(id);
+
+                temporal.add(p);
+            }
+        } catch (ParserConfigurationException | SAXException e) {
+            // XML mal formado o error del parser → IOException
+            throw new IOException("XML no válido: " + e.getMessage(), e);
+        }
+
+        // 5. Solo si TODO ha ido bien devolvemos la lista
+        return temporal;
+    }
+</script>
+  </div>
+  <div class="grp"><h2>E · JSON</h2><p class="grp-sub">Relación 3 ej. 5 · necesita Maven</p></div>
+  <div class="card" id="b-E1">
+    <h3><span class="icon">E1</span> pom.xml con Jackson</h3>
+    <p class="para"><strong>Qué hace:</strong> Proyecto Maven con Java 17 y Jackson. Después de pegarlo: recargar Maven.</p>
+    <p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li><code>groupId</code> / <code>artifactId</code> si quieres</li></ul><script type="text/plain" class="code" data-lang="xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>es.dam</groupId>
+    <artifactId>productos-json</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.18.3</version>
+        </dependency>
+    </dependencies>
+</project>
+
+</script>
+  </div>
+  <div class="card" id="b-E2">
+    <h3><span class="icon">E2</span> Exportar e importar JSON</h3>
+    <p class="para"><strong>Qué hace:</strong> Escribe la lista en JSON y la lee validándola. La clase necesita constructor vacío + getters y setters.</p>
+    <p class="para"><strong>Devuelve:</strong> Importar: la lista</p><p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>El tipo en <code>TypeReference&lt;List&lt;Producto&gt;&gt;</code></li></ul><script type="text/plain" class="code" data-lang="java">
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class GestorJson {
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    // Escribe la lista en JSON (bonito, con sangría)
+    public static void exportarJson(Path archivo, List<Producto> lista) throws IOException {
+        // 1. Creamos la carpeta si no existe
+        Path carpeta = archivo.getParent();
+        if (carpeta != null) {
+            Files.createDirectories(carpeta);
+        }
+
+        // 2. Escribimos
+        mapper.writerWithDefaultPrettyPrinter().writeValue(archivo.toFile(), lista);
+    }
+
+    // Lee la lista desde JSON y la valida. Si algo falla, lanza IOException.
+    public static List<Producto> importarJson(Path archivo) throws IOException {
+        // 1. Si no existe, error
+        if (Files.notExists(archivo)) {
+            throw new IOException("No existe el archivo " + archivo);
+        }
+
+        // 2. Leemos (si el JSON está mal escrito, Jackson lanza IOException)
+        List<Producto> lista = mapper.readValue(archivo.toFile(), new TypeReference<List<Producto>>() {});
+
+        // 3. Validamos
+        if (lista == null) {
+            throw new IOException("El JSON no contiene una lista");
+        }
+        Set<Integer> ids = new HashSet<>();
+        for (Producto p : lista) {
+            if (!Gestor.esValido(p)) {
+                throw new IOException("Datos no válidos en el JSON");
+            }
+            if (ids.contains(p.getId())) {
+                throw new IOException("ID repetido: " + p.getId());
+            }
+            ids.add(p.getId());
+        }
+
+        // 4. Todo bien
+        return lista;
+    }
+}
+</script>
+  </div>
+  <div class="grp"><h2>F · Main (menú)</h2><p class="grp-sub">Lo que pide el usuario y los mensajes van aquí</p></div>
+  <div class="card" id="b-F1">
+    <h3><span class="icon">F1</span> Esqueleto del menú</h3>
+    <p class="para"><strong>Qué hace:</strong> Bucle con menú, <code>switch</code> y los <code>catch</code> que evitan que el programa se cierre.</p>
+    <p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>Las opciones del menú</li><li>Quita la línea de <code>lista</code> si el ejercicio no trabaja en memoria</li></ul><script type="text/plain" class="code" data-lang="java">
+        try (Scanner teclado = new Scanner(System.in)) {
+            List<Producto> lista = Gestor.cargar(archivo);       // solo si el programa trabaja con la lista en memoria
+            int opcion = -1;
+
+            while (opcion != 0) {
+                // 1. Mostramos el menú
+                System.out.println("\nMENÚ");
+                System.out.println("1. Listar | 2. Buscar | 3. Alta | 4. Modificar");
+                System.out.println("5. Eliminar | 6. Restaurar copia | 0. Salir");
+                System.out.print("Opción: ");
+
+                try {
+                    // 2. Leemos la opción
+                    opcion = Integer.parseInt(teclado.nextLine().trim());
+
+                    // 3. Según la opción, hacemos una cosa
+                    switch (opcion) {
+                        case 1 -> {
+                            // Aquí va el código de cada opción (ver bloques "Caso: ...")
+                            for (Producto p : Gestor.cargar(archivo)) {
+                                System.out.println(p);
+                            }
+                        }
+                        case 0 -> {
+                            System.out.println("Hasta luego.");
+                        }
+                        default -> {
+                            System.out.println("Opción desconocida.");
+                        }
+                    }
+
+                } catch (NumberFormatException e) {
+                    // Escribieron letras donde iba un número
+                    System.out.println("Introduce un número entero válido.");
+                } catch (IOException e) {
+                    // Falló algo con un fichero: el menú sigue
+                    System.out.println("Error de archivo: " + e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("No se pudo iniciar el programa: " + e.getMessage());
+        }
+</script>
+  </div>
+  <div class="card" id="b-F2">
+    <h3><span class="icon">F2</span> Caso: listar</h3>
+    <p class="para"><strong>Qué hace:</strong> </p>
+    <script type="text/plain" class="code" data-lang="java">
+            case 1 -> {
+                // Listar: cargamos y mostramos cada uno
+                List<Producto> productos = Gestor.cargar(archivo);
+                if (productos.isEmpty()) {
+                    System.out.println("No hay datos.");
+                }
+                for (Producto p : productos) {
+                    System.out.println(p);
+                }
+            }
+</script>
+  </div>
+  <div class="card" id="b-F3">
+    <h3><span class="icon">F3</span> Caso: buscar</h3>
+    <p class="para"><strong>Qué hace:</strong> Muestra el objeto o «no encontrado».</p>
+    <script type="text/plain" class="code" data-lang="java">
+            case 2 -> {
+                // Buscar: pedimos ID, buscamos y mostramos el resultado
+                System.out.print("ID que buscas: ");
+                int id = Integer.parseInt(teclado.nextLine().trim());
+
+                Producto encontrado = Gestor.buscar(Gestor.cargar(archivo), id);
+
+                if (encontrado == null) {
+                    System.out.println("ID no encontrado.");
+                } else {
+                    System.out.println(encontrado);
+                }
+            }
+</script>
+  </div>
+  <div class="card" id="b-F4">
+    <h3><span class="icon">F4</span> Caso: alta</h3>
+    <p class="para"><strong>Qué hace:</strong> Pide todos los datos y muestra un mensaje según el <code>boolean</code>.</p>
+    <p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>Los datos que se piden</li></ul><script type="text/plain" class="code" data-lang="java">
+            case 3 -> {
+                // Alta: pedimos todos los datos y llamamos al método
+                System.out.print("ID: ");
+                int id = Integer.parseInt(teclado.nextLine().trim());
+                System.out.print("Nombre: ");
+                String nombre = teclado.nextLine().trim();
+                System.out.print("Cantidad: ");
+                int cantidad = Integer.parseInt(teclado.nextLine().trim());
+
+                boolean ok = Gestor.registrar(archivo, new Producto(id, nombre, cantidad));
+
+                if (ok) {
+                    System.out.println("Añadido correctamente.");
+                } else {
+                    System.out.println("Datos incorrectos o ID repetido.");
+                }
+            }
+</script>
+  </div>
+  <div class="card" id="b-F5">
+    <h3><span class="icon">F5</span> Caso: modificar</h3>
+    <p class="para"><strong>Qué hace:</strong> Pide ID y valor nuevo; mensaje según el <code>boolean</code>.</p>
+    <script type="text/plain" class="code" data-lang="java">
+            case 4 -> {
+                // Modificar: pedimos ID y valor nuevo, llamamos y miramos el boolean
+                System.out.print("ID: ");
+                int id = Integer.parseInt(teclado.nextLine().trim());
+                System.out.print("Nueva cantidad: ");
+                int cantidad = Integer.parseInt(teclado.nextLine().trim());
+
+                boolean ok = Gestor.actualizarCantidad(archivo, id, cantidad);
+
+                if (ok) {
+                    System.out.println("Modificado correctamente.");
+                } else {
+                    System.out.println("No existe ese ID o el valor no es válido. No se ha cambiado nada.");
+                }
+            }
+</script>
+  </div>
+  <div class="card" id="b-F6">
+    <h3><span class="icon">F6</span> Caso: eliminar</h3>
+    <p class="para"><strong>Qué hace:</strong> Pide ID; mensaje según el <code>boolean</code>.</p>
+    <script type="text/plain" class="code" data-lang="java">
+            case 5 -> {
+                // Eliminar: pedimos ID, llamamos y miramos el boolean
+                System.out.print("ID a eliminar: ");
+                int id = Integer.parseInt(teclado.nextLine().trim());
+
+                boolean ok = Gestor.eliminar(archivo, id);
+
+                if (ok) {
+                    System.out.println("Eliminado correctamente.");
+                } else {
+                    System.out.println("No existe ese ID.");
+                }
+            }
+</script>
+  </div>
+  <div class="card" id="b-F7">
+    <h3><span class="icon">F7</span> Caso: restaurar con confirmación S/N</h3>
+    <p class="para"><strong>Qué hace:</strong> Pregunta primero; solo si responde S llama a restaurar.</p>
+    <script type="text/plain" class="code" data-lang="java">
+            case 6 -> {
+                // Restaurar: primero preguntamos S/N, luego llamamos
+                System.out.print("¿Seguro que quieres restaurar la copia? (S/N): ");
+                String respuesta = teclado.nextLine().trim();
+
+                if (respuesta.equalsIgnoreCase("S")) {
+                    boolean ok = Gestor.restaurar(archivo);
+                    if (ok) {
+                        System.out.println("Copia restaurada.");
+                    } else {
+                        System.out.println("No hay ninguna copia que restaurar.");
+                    }
+                } else {
+                    System.out.println("Restauración cancelada.");
+                }
+            }
+</script>
+  </div>
+  <div class="card" id="b-F8">
+    <h3><span class="icon">F8</span> Caso: cambiar en memoria</h3>
+    <p class="para"><strong>Qué hace:</strong> Para ejercicios que trabajan con la lista cargada y guardan aparte.</p>
+    <script type="text/plain" class="code" data-lang="java">
+            case 7 -> {
+                // Cambiar en memoria (la lista NO se guarda aquí)
+                System.out.print("ID: ");
+                int id = Integer.parseInt(teclado.nextLine().trim());
+                System.out.print("Nueva cantidad: ");
+                int cantidad = Integer.parseInt(teclado.nextLine().trim());
+
+                boolean ok = Gestor.cambiarCantidad(lista, id, cantidad);
+
+                if (ok) {
+                    System.out.println("Cambiado en memoria (usa Guardar para que se quede).");
+                } else {
+                    System.out.println("No existe ese ID o el valor no es válido.");
+                }
+            }
+</script>
+  </div>
+  <div class="card" id="b-F9">
+    <h3><span class="icon">F9</span> Casos: guardar y recargar</h3>
+    <p class="para"><strong>Qué hace:</strong> Recargar = sustituir la lista por lo que hay en el fichero.</p>
+    <script type="text/plain" class="code" data-lang="java">
+            case 8 -> {
+                // Guardar la lista en el fichero
+                Gestor.guardarBinario(binario, lista);
+                System.out.println("Lista guardada.");
+            }
+            case 9 -> {
+                // Recargar: sustituimos la lista por lo que hay en el fichero
+                lista = Gestor.cargarBinario(binario);
+                System.out.println("Lista recargada: " + lista.size() + " elementos.");
+            }
+</script>
+  </div>
+  <div class="card" id="b-F10">
+    <h3><span class="icon">F10</span> Caso: exportar</h3>
+    <p class="para"><strong>Qué hace:</strong> </p>
+    <script type="text/plain" class="code" data-lang="java">
+            case 10 -> {
+                // Exportar: llamamos y avisamos
+                Gestor.exportarXml(xml, lista);
+                System.out.println("XML exportado en " + xml);
+            }
+</script>
+  </div>
+  <div class="card" id="b-F11">
+    <h3><span class="icon">F11</span> Caso: importar</h3>
+    <p class="para"><strong>Qué hace:</strong> Si la importación falla, salta al <code>catch (IOException)</code> y la lista no cambia.</p>
+    <script type="text/plain" class="code" data-lang="java">
+            case 11 -> {
+                // Importar: si falla, lanza IOException y la lista NO cambia
+                List<Producto> importados = Gestor.importarXml(xml);
+                lista = importados;
+                System.out.println("Importados " + lista.size() + " elementos.");
+            }
+</script>
+  </div>
+  <div class="grp"><h2>G · Repositorio e interfaz</h2><p class="grp-sub">Relación 3 ej. 6 y 7</p></div>
+  <div class="card" id="b-G1">
+    <h3><span class="icon">G1</span> Interfaz</h3>
+    <p class="para"><strong>Qué hace:</strong> El contrato: qué métodos debe tener cualquier repositorio.</p>
+    <p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>Tipo de la lista</li></ul><script type="text/plain" class="code" data-lang="java">
+import java.io.IOException;
+import java.util.List;
+
+public interface RepositorioProductos {
+    void guardarTodos(List<Producto> productos) throws IOException;
+
+    List<Producto> cargarTodos() throws IOException;
+}
+</script>
+  </div>
+  <div class="card" id="b-G2">
+    <h3><span class="icon">G2</span> Clase que implementa la interfaz</h3>
+    <p class="para"><strong>Qué hace:</strong> Guarda y carga llamando a los métodos de los bloques B (o C para binario).</p>
+    <p class="para"><strong>Para adaptarlo cambia:</strong></p><ul><li>Para binario: llama a <code>cargarBinario</code> / <code>guardarBinario</code></li></ul><p class="para">En Main: <code>RepositorioProductos repo = new RepositorioTexto("datos/productos.csv");</code> y para cambiar a binario solo cambias esa línea.</p><script type="text/plain" class="code" data-lang="java">
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+
+// Una clase que cumple la interfaz. Por dentro llama a los métodos de CSV.
+// Para binario: copia esta clase, llámala RepositorioBinario y usa cargarBinario/guardarBinario.
+public class RepositorioTexto implements RepositorioProductos {
+    private final Path archivo;
+
+    public RepositorioTexto(String ruta) {
+        this.archivo = Path.of(ruta);
+    }
+
+    @Override
+    public void guardarTodos(List<Producto> productos) throws IOException {
+        Gestor.guardarTodo(archivo, productos);
+    }
+
+    @Override
+    public List<Producto> cargarTodos() throws IOException {
+        return Gestor.cargar(archivo);
+    }
+}
+</script>
+  </div>
+  <div class="grp"><h2>H · Excepciones</h2><p class="grp-sub">Convertir errores en IOException</p></div>
+  <div class="card" id="b-H1">
+    <h3><span class="icon">H1</span> Convertir excepciones</h3>
+    <p class="para"><strong>Qué hace:</strong> Cuando el método solo puede lanzar <code>IOException</code> pero dentro salta otra.</p>
+    <script type="text/plain" class="code" data-lang="java">
+// Patrón: "esta excepción no me la dejan lanzar → la convierto en IOException"
+
+// 1) Al convertir números
+try {
+    id = Integer.parseInt(campos[0].trim());
+} catch (NumberFormatException e) {
+    throw new IOException("Línea " + numLinea + ": número no válido");
+}
+
+// 2) Al leer binario
+try (ObjectInputStream entrada = new ObjectInputStream(Files.newInputStream(archivo))) {
+    // ...
+} catch (ClassNotFoundException e) {
+    throw new IOException("No se encuentra la clase: " + e.getMessage(), e);
+}
+
+// 3) Al escribir XML
+try {
+    // ... DocumentBuilderFactory ... Transformer ...
+} catch (ParserConfigurationException | TransformerException e) {
+    throw new IOException("No se pudo exportar el XML: " + e.getMessage(), e);
+}
+
+// 4) Al leer XML
+try {
+    // ... parse(...) ...
+} catch (ParserConfigurationException | SAXException e) {
+    throw new IOException("XML no válido: " + e.getMessage(), e);
+}
+</script>
+  </div>
+</div>
+
+<!-- ═══════════════ CAMBIOS TÍPICOS ═══════════════ -->
+<div class="panel" id="cambios" hidden>
+  <h2 class="panel-title">Cambios típicos</h2>
+  <div class="card">
+    <h3><span class="icon">0</span> Antes de tocar nada (5 minutos)</h3>
+    <ol>
+      <li><strong>Ejecuta</strong> el programa tal cual y prueba cada opción. Así sabes qué hace y si ya funciona.</li>
+      <li>Mira <strong>qué clases hay</strong> y quién usa a quién: la clase de datos (Producto, Club…), el repositorio, el <code>Main</code>/menú.</li>
+      <li>Busca dónde se <strong>lee</strong> y dónde se <strong>escribe</strong> cada fichero: Ctrl+Shift+F y busca <code>Files.</code>, <code>split</code>, <code>createElement</code>, <code>mapper</code>.</li>
+      <li>Después de cada cambio, <strong>compila y ejecuta</strong>. No hagas diez cambios seguidos.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">⌨</span> VS Code: atajos que te salvan</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Atajo</th><th>Para qué</th></tr>
+      <tr><td><strong>F2</strong> sobre un nombre</td><td>Renombrar clase, método o variable <strong>en todo el proyecto</strong> (también el fichero)</td></tr>
+      <tr><td><strong>Ctrl+Shift+F</strong></td><td>Buscar un texto en todos los ficheros</td></tr>
+      <tr><td><strong>F12</strong> / Ctrl+clic</td><td>Ir a la definición (¿dónde está ese método?)</td></tr>
+      <tr><td><strong>Shift+F12</strong></td><td>Ver todos los sitios donde se usa algo</td></tr>
+      <tr><td><strong>Ctrl+.</strong> sobre un error</td><td>Arreglo rápido: añadir import, crear método…</td></tr>
+      <tr><td>Clic derecho → <strong>Source Action</strong></td><td>Generar getters/setters, constructor y <code>toString</code></td></tr>
+      <tr><td><strong>Ctrl+Shift+O</strong></td><td>Organizar imports (añade los que faltan, quita los que sobran)</td></tr>
+      <tr><td>Pestaña <strong>Problems</strong> (Ctrl+Shift+M)</td><td>Lista de errores: tras un cambio, te dice todos los sitios que faltan</td></tr>
+    </table></div>
+    <div class="tip"><strong>Truco:</strong> los errores en rojo son tu lista de tareas. Si añades un parámetro al constructor, Java marcará cada <code>new Producto(...)</code> que tienes que actualizar.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">+</span> Añadir un campo nuevo (ej. <code>categoria</code>)</h3>
+    <p>Es el cambio más probable. Un campo aparece en <strong>muchos sitios</strong>; repásalos todos:</p>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Dónde</th><th>Qué hacer</th></tr>
+      <tr><td>Clase de datos</td><td>Atributo <code>private String categoria;</code> + getter + setter + parámetro en el constructor + <code>toString</code></td></tr>
+      <tr><td>Cada <code>new Producto(...)</code></td><td>Añadir el valor nuevo (los errores rojos te los señalan)</td></tr>
+      <tr><td>Alta / teclado</td><td>Pedir el dato y validarlo (¿vacío?, ¿rango?)</td></tr>
+      <tr><td>TXT/CSV: escribir</td><td>Añadir <code>+ ";" + p.getCategoria()</code></td></tr>
+      <tr><td>TXT/CSV: leer</td><td><code>c.length != 4</code> → <code>!= 5</code>, y usar <code>c[4]</code> en el constructor. Actualizar la cabecera</td></tr>
+      <tr><td>XML: exportar</td><td>Otro <code>hijo(doc, prod, "categoria", p.getCategoria())</code></td></tr>
+      <tr><td>XML: importar</td><td>Otro <code>texto(e, "categoria")</code> + validación</td></tr>
+      <tr><td>JSON</td><td>Nada más: Jackson lo hace solo <strong>si hay getter y setter</strong> (y constructor vacío)</td></tr>
+      <tr><td>Binario</td><td>Nada en el código, pero los <code>.dat</code> antiguos ya no se leen: bórralos y vuelve a guardar</td></tr>
+      <tr><td>Validaciones</td><td>Añadir la regla en <code>validar(...)</code> si la hay</td></tr>
+      <tr><td>Ficheros de datos existentes</td><td>CSV/XML/JSON viejos sin ese campo: actualizarlos a mano o el import fallará</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">−</span> Quitar un campo</h3>
+    <p>Lo mismo al revés: borra el atributo y deja que los <strong>errores en rojo</strong> te lleven a cada sitio (getters usados, constructor, <code>toString</code>, CSV, XML). Ajusta el nº de campos del <code>split</code> y los índices <code>c[...]</code> que vengan detrás.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">⇄</span> Cambiar de clase (Producto → Club, Préstamo…)</h3>
+    <ol>
+      <li><strong>F2</strong> sobre el nombre de la clase → escribe el nuevo. Cambia la clase, el fichero y todos los usos.</li>
+      <li>Cambia los <strong>atributos</strong> (ver «Añadir/Quitar un campo»). Ojo con los tipos: <code>double precio</code> → <code>String ciudad</code> implica quitar <code>Double.parseDouble</code> y validaciones de «negativo».</li>
+      <li>Renombra también <strong>variables y textos</strong>: <code>productos</code> → <code>clubes</code>, etiquetas XML <code>"producto"</code> → <code>"club"</code>, mensajes, rutas (<code>productos.dat</code>).</li>
+      <li>Si cambias el tipo de un campo, revisa <code>parseInt</code>/<code>parseDouble</code> en lectura de CSV y XML.</li>
+    </ol>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Tipo del campo</th><th>Leer de texto</th><th>Escribir a texto</th><th>Validar</th></tr>
+      <tr><td><code>int</code></td><td><code>Integer.parseInt(t)</code></td><td><code>String.valueOf(n)</code></td><td><code>n &gt; 0</code>, <code>n &gt;= 0</code></td></tr>
+      <tr><td><code>double</code></td><td><code>Double.parseDouble(t)</code></td><td><code>String.valueOf(d)</code></td><td><code>d &gt;= 0</code></td></tr>
+      <tr><td><code>String</code></td><td><code>t.trim()</code></td><td>tal cual</td><td><code>!t.isBlank()</code></td></tr>
+      <tr><td><code>boolean</code></td><td><code>Boolean.parseBoolean(t)</code></td><td><code>String.valueOf(b)</code></td><td>—</td></tr>
+      <tr><td><code>LocalDate</code></td><td><code>LocalDate.parse("2026-11-03")</code></td><td><code>fecha.toString()</code></td><td><code>DateTimeParseException</code></td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">⇆</span> Cambiar dónde se guarda (TXT ↔ binario)</h3>
+    <p>Si hay repositorio con interfaz: cambia <strong>solo la línea</strong> <code>new RepositorioTexto(...)</code> por <code>new RepositorioBinario(...)</code> (bloques G1 y G2). Si no lo hay, cambia las llamadas a los bloques B (texto) por las de los bloques C (binario).</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">≡</span> Añadir una opción al menú</h3>
+    <ol>
+      <li>Añade el texto en el <code>println</code> del menú.</li>
+      <li>Añade el <code>case "N" -&gt; metodoNuevo();</code> en el <code>switch</code>.</li>
+      <li>Escribe <code>static void metodoNuevo() { ... }</code> copiando uno parecido (buscar, listar…).</li>
+    </ol>
+    <script type="text/plain" class="code" data-lang="java">
+      // Ejemplos de opciones típicas
+      static void listarStockBajo() {                       // filtrar
+          for (Producto p : productos) if (p.getStock() < 5) System.out.println(p);
+      }
+      static void valorTotal() {                            // sumar
+          double total = 0;
+          for (Producto p : productos) total += p.getPrecio() * p.getStock();
+          System.out.printf("Valor total: %.2f €%n", total);
+      }
+      static void listarOrdenado() {                        // ordenar (sin cambiar la lista original)
+          List<Producto> copia = new ArrayList<>(productos);
+          copia.sort(Comparator.comparing(Producto::getNombre));     // import java.util.Comparator;
+          for (Producto p : copia) System.out.println(p);
+      }
+      static void buscarPorNombre() {                       // buscar por texto
+          String t = leerTexto("Texto a buscar: ").toLowerCase();
+          for (Producto p : productos) if (p.getNombre().toLowerCase().contains(t)) System.out.println(p);
+      }
+      static void modificarPrecio() {                       // modificar otro campo
+          Producto p = buscarPorId(leerEntero("ID: "));
+          if (p == null) { System.out.println("No existe."); return; }
+          double nuevo = leerDecimal("Nuevo precio: ");
+          if (nuevo < 0) { System.out.println("No puede ser negativo."); return; }
+          p.setPrecio(nuevo);
+      }
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">✓</span> Añadir o cambiar una validación</h3>
+    <p>Busca dónde están las otras (<code>if (... &lt;= 0)</code>, <code>validar(...)</code>, <code>isBlank</code>) y añade la tuya <strong>al lado y con el mismo estilo</strong>: si las demás hacen <code>continue</code>, <code>return</code> o <code>throw</code>, la tuya también.</p>
+    <script type="text/plain" class="code" data-lang="java">
+      if (nombre.length() > 30)            → nombre demasiado largo
+      if (precio > 10000)                  → precio fuera de rango
+      if (!email.contains("@"))            → formato incorrecto
+      if (nombreRepetido(nombre))          → duplicado de texto (trim + equalsIgnoreCase)
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">;</span> Otros cambios rápidos</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Te piden…</th><th>Toca…</th></tr>
+      <tr><td>Cambiar el separador <code>;</code> por <code>,</code> o <code>|</code></td><td>El <code>split(...)</code> y la línea que concatena al escribir. <code>|</code> se escribe <code>split("\\|", -1)</code></td></tr>
+      <tr><td>Cambiar rutas / nombres de fichero</td><td>Las constantes o <code>Path.of(...)</code> de arriba</td></tr>
+      <tr><td>Que no se repita otro campo</td><td>Copiar la comprobación del ID y cambiar el campo (texto: <code>trim</code> + <code>equalsIgnoreCase</code>)</td></tr>
+      <tr><td>Copia antes de guardar</td><td>Llamar a <code>crearCopia()</code> justo antes de <code>Files.write</code> / <code>guardarTodos</code></td></tr>
+      <tr><td>Etiquetas XML distintas</td><td><code>createElement("...")</code> al exportar y <code>getElementsByTagName("...")</code> al importar</td></tr>
+      <tr><td>Que el XML lleve otro atributo</td><td><code>setAttribute("x", ...)</code> / <code>getAttribute("x")</code></td></tr>
+      <tr><td>Un mensaje o formato de salida</td><td>El <code>toString()</code> o el <code>println</code></td></tr>
+    </table></div>
+  </div>
+</div>
+
+<!-- ═══════════════ FLUJO ═══════════════ -->
+<div class="panel" id="flujo" hidden>
+  <h2 class="panel-title">Flujo</h2>
+  <div class="card">
+    <h3><span class="icon">→</span> Cualquier ejercicio de fichero de texto</h3>
+    <div class="flow">
+      <div class="step"><div class="dot">1</div><div class="body"><b>Rutas</b><span><code>Path.of(...)</code>, <code>resolve</code>, <code>resolveSibling</code>. Solo direcciones, no tocan el disco</span></div></div>
+      <div class="step"><div class="dot">2</div><div class="body"><b>Preparar</b><span><code>Files.createDirectories(carpeta)</code> si vas a escribir · <code>Files.exists(ruta)</code> si vas a leer</span></div></div>
+      <div class="step"><div class="dot">3</div><div class="body"><b>Pedir datos y validarlos</b><span>Antes de abrir el fichero. Si algo falla: mensaje y <code>return</code></span></div></div>
+      <div class="step"><div class="dot">4</div><div class="body"><b>Leer</b><span><code>readAllLines</code> (modificar/borrar) o <code>BufferedReader</code> (mostrar/buscar)</span></div></div>
+      <div class="step"><div class="dot">5</div><div class="body"><b>Recorrer y validar cada línea</b><span><code>split(";", -1)</code> → nº campos → números → vacíos → repetidos</span>
+        <div class="branch">
+          <div class="pill bad"><b>Línea mala</b>Mensaje (con nº de línea) + <code>continue</code></div>
+          <div class="pill ok"><b>Línea buena</b>Mostrar / guardar en lista / marcar <code>encontrado</code></div>
+        </div></div></div>
+      <div class="step"><div class="dot">6</div><div class="body"><b>Después del bucle</b><span>¿Encontrado? ¿Hay que escribir? Si no, avisar y no tocar nada</span></div></div>
+      <div class="step"><div class="dot">7</div><div class="body"><b>Copia de seguridad (si reescribes)</b><span><code>Files.copy(..., REPLACE_EXISTING)</code> justo antes de escribir</span></div></div>
+      <div class="step"><div class="dot">8</div><div class="body"><b>Escribir</b><span><code>Files.write</code> (reescribir) · <code>APPEND</code> (añadir) · fichero nuevo (filtrar)</span></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">?</span> ¿Qué tipo de ejercicio es?</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Te piden…</th><th>Leer con</th><th>Escribir con</th><th>Idea clave</th></tr>
+      <tr><td>Mostrar todo</td><td><code>BufferedReader</code></td><td>—</td><td>Saltar cabecera, validar, imprimir</td></tr>
+      <tr><td>Buscar uno</td><td><code>BufferedReader</code></td><td>—</td><td><code>encontrado</code> + <code>break</code>; avisar si no está</td></tr>
+      <tr><td>Alta</td><td><code>readAllLines</code> (buscar repetidos)</td><td><code>BufferedWriter</code> + <code>APPEND</code></td><td>Validar todo antes de añadir</td></tr>
+      <tr><td>Modificar</td><td><code>readAllLines</code></td><td><code>Files.write</code></td><td>Lista nueva: todas igual menos una cambiada</td></tr>
+      <tr><td>Borrar</td><td><code>readAllLines</code></td><td><code>Files.write</code></td><td>Lista nueva: todas menos una</td></tr>
+      <tr><td>Filtrar / importar</td><td><code>readAllLines</code></td><td><code>Files.write</code> a <strong>otro</strong> fichero</td><td>Nunca sobrescribir la entrada</td></tr>
+      <tr><td>Copia / restaurar</td><td>—</td><td><code>Files.copy</code></td><td>Confirmar antes de restaurar</td></tr>
+      <tr><td>Guardar objetos</td><td><code>ObjectInputStream</code></td><td><code>ObjectOutputStream</code></td><td>La lista entera como un objeto</td></tr>
+      <tr><td>Exportar / importar XML</td><td>DOM <code>parse</code></td><td>DOM + <code>Transformer</code></td><td>Lista temporal; validar todo antes</td></tr>
+      <tr><td>Exportar / importar JSON</td><td><code>mapper.readValue</code></td><td><code>mapper.writeValue</code></td><td>Maven + Jackson + <code>TypeReference</code></td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">C</span> CRUD en un fichero de texto</h3>
+    <div class="grid3">
+      <div><h4>Alta</h4><ol><li>Pedir y validar datos</li><li>Leer y buscar repetidos</li><li>Si todo bien → <code>APPEND</code></li></ol></div>
+      <div><h4>Modificar</h4><ol><li><code>readAllLines</code></li><li>Lista nueva; la buscada cambiada</li><li>Si se encontró → <code>Files.write</code></li></ol></div>
+      <div><h4>Baja</h4><ol><li><code>readAllLines</code></li><li>Lista nueva <strong>sin</strong> la buscada</li><li>Si se encontró → <code>Files.write</code></li></ol></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TEORÍA ═══════════════ -->
+<div class="panel" id="teoria" hidden>
+  <h2 class="panel-title">Teoría</h2>
+  <div class="card">
+    <h3><span class="icon">Aa</span> Conceptos que te pueden preguntar</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Concepto</th><th>Qué es</th></tr>
+      <tr><td><strong>Persistencia</strong></td><td>Que los datos sigan existiendo al cerrar el programa (guardarlos en disco)</td></tr>
+      <tr><td><strong>Fichero / directorio</strong></td><td>Unidad de información guardada / carpeta que organiza ficheros y otras carpetas</td></tr>
+      <tr><td><strong>Ruta relativa</strong></td><td>Se interpreta desde el directorio de trabajo: <code>datos/clubes.txt</code></td></tr>
+      <tr><td><strong>Ruta absoluta</strong></td><td>Ubicación completa: <code>C:\Users\...\clubes.txt</code>. Depende del equipo: no usar en el código</td></tr>
+      <tr><td><strong>Registro / campo</strong></td><td>Registro = una línea (un club). Campo = cada dato separado por <code>;</code></td></tr>
+      <tr><td><strong>Codificación UTF-8</strong></td><td>Cómo se traducen caracteres a bytes. Admite tildes y eñes. Indicarla siempre</td></tr>
+      <tr><td><strong>CRUD</strong></td><td>Create, Read, Update, Delete = alta, consulta, modificación, baja</td></tr>
+      <tr><td><strong>Acceso secuencial</strong></td><td>Para llegar a un registro hay que pasar por los anteriores (ficheros de texto)</td></tr>
+      <tr><td><strong>Acceso aleatorio</strong></td><td>Saltas directamente a una posición en bytes (<code>RandomAccessFile</code> + <code>seek</code>). Requiere registros de tamaño fijo</td></tr>
+      <tr><td><strong>Fichero de texto</strong></td><td>Guarda caracteres; lo lee una persona. Hay que partir campos al leer</td></tr>
+      <tr><td><strong>Fichero binario</strong></td><td>Guarda bytes; no se lee con un editor. Puede guardar objetos enteros</td></tr>
+      <tr><td><strong>Serialización</strong></td><td>Convertir un objeto en bytes. <strong>Deserialización</strong>: reconstruirlo al leer</td></tr>
+      <tr><td><strong>Flujo (stream)</strong></td><td>Secuencia de datos que el programa envía a un fichero o recibe de él</td></tr>
+      <tr><td><strong>serialVersionUID</strong></td><td>Versión de la estructura de la clase; si cambia, los ficheros viejos no se pueden leer</td></tr>
+      <tr><td><strong>XML</strong></td><td>Texto estructurado con etiquetas y atributos. Para intercambiar datos</td></tr>
+      <tr><td><strong>DOM</strong></td><td>Representa el XML en memoria como un árbol de nodos</td></tr>
+      <tr><td><strong>JSON</strong></td><td>Texto con objetos <code>{"clave": valor}</code> y arrays <code>[ ]</code>. Más ligero que XML</td></tr>
+      <tr><td><strong>Maven / dependencia</strong></td><td>Gestor de proyectos; <code>pom.xml</code> declara librerías (ej. Jackson) que se descargan solas</td></tr>
+      <tr><td><strong>Interfaz</strong></td><td>Contrato: métodos que deben ofrecer las clases que la implementan</td></tr>
+      <tr><td><strong>Repositorio</strong></td><td>Clase que sabe guardar/cargar datos. Separa el menú del acceso a ficheros</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">⇄</span> Comparativas</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th></th><th>TXT / CSV</th><th>Binario (objetos)</th><th>Aleatorio</th><th>XML</th><th>JSON</th></tr>
+      <tr><td>Legible por personas</td><td>Sí</td><td>No</td><td>No</td><td>Sí</td><td>Sí</td></tr>
+      <tr><td>Modificar un registro</td><td>Reescribir todo</td><td>Reescribir la lista</td><td><strong>Solo esos bytes</strong></td><td>Reescribir todo</td><td>Reescribir todo</td></tr>
+      <tr><td>Clases principales</td><td><code>BufferedReader/Writer</code>, <code>Files</code></td><td><code>ObjectInput/OutputStream</code></td><td><code>RandomAccessFile</code></td><td>DOM, <code>Transformer</code></td><td>Jackson <code>ObjectMapper</code></td></tr>
+      <tr><td>Uso típico</td><td>Datos simples</td><td>Guardar el estado del programa</td><td>Muchos registros, acceso directo</td><td>Intercambio entre aplicaciones</td><td>Intercambio, APIs web</td></tr>
+    </table></div>
+    <div class="tip"><strong>¿Por qué en un TXT hay que reescribir todo para modificar?</strong> Porque las líneas tienen longitud variable: cambiar «Cádiz» por «Villanueva de la Serena» ocupa más bytes y pisaría el registro siguiente.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">✓</span> Reglas de oro del temario</h3>
+    <ul>
+      <li>Indica siempre <strong>UTF-8</strong>.</li>
+      <li>Comprueba que el fichero <strong>existe</strong> antes de leerlo.</li>
+      <li>Si buscas y <strong>no encuentras</strong>, no reescribas el fichero.</li>
+      <li>Haz una <strong>copia</strong> antes de sobrescribir y <strong>pide confirmación</strong> antes de restaurar o borrar.</li>
+      <li>Al importar, valida todo en una <strong>lista temporal</strong> y solo después sustituye los datos.</li>
+      <li>Un registro defectuoso <strong>no debe</strong> hacer perder los válidos.</li>
+      <li>No construyas XML ni JSON <strong>concatenando cadenas</strong>: usa la API.</li>
+      <li>No deserialices ficheros de <strong>origen desconocido</strong>.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ PYTHON ↔ JAVA ═══════════════ -->
+<div class="panel" id="python" hidden>
+  <h2 class="panel-title">Python ↔ Java</h2>
+  <div class="card">
+    <h3><span class="icon">py</span> Si lo sabes en Python, ya sabes la idea</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Python</th><th>Java</th></tr>
+      <tr><td><code>os.makedirs("datos", exist_ok=True)</code></td><td><code>Files.createDirectories(Path.of("datos"))</code></td></tr>
+      <tr><td><code>os.path.exists(r)</code></td><td><code>Files.exists(r)</code></td></tr>
+      <tr><td><code>os.path.join("a", "b")</code></td><td><code>Path.of("a", "b")</code> · <code>carpeta.resolve("b")</code></td></tr>
+      <tr><td><code>os.listdir(c)</code></td><td><code>Files.newDirectoryStream(c)</code> · <code>Files.list(c)</code></td></tr>
+      <tr><td><code>shutil.copy(a, b)</code></td><td><code>Files.copy(a, b, REPLACE_EXISTING)</code></td></tr>
+      <tr><td><code>os.remove(r)</code></td><td><code>Files.deleteIfExists(r)</code></td></tr>
+      <tr><td><code>with open(r, encoding="utf-8") as f:</code></td><td><code>try (BufferedReader f = Files.newBufferedReader(r, StandardCharsets.UTF_8)) { }</code></td></tr>
+      <tr><td><code>f.readline()</code> · fin → <code>""</code></td><td><code>f.readLine()</code> · fin → <code>null</code></td></tr>
+      <tr><td><code>f.readlines()</code></td><td><code>Files.readAllLines(r, StandardCharsets.UTF_8)</code></td></tr>
+      <tr><td><code>f.read()</code></td><td><code>Files.readString(r, StandardCharsets.UTF_8)</code></td></tr>
+      <tr><td><code>open(r, "w")</code> / <code>open(r, "a")</code></td><td><code>newBufferedWriter(r, UTF_8)</code> / <code>+ CREATE, APPEND</code></td></tr>
+      <tr><td><code>pickle.dump(obj, f)</code></td><td><code>ObjectOutputStream.writeObject(obj)</code></td></tr>
+      <tr><td><code>json.dump(datos, f)</code></td><td><code>mapper.writeValue(file, datos)</code></td></tr>
+      <tr><td><code>linea.split(";")</code></td><td><code>linea.split(";", -1)</code></td></tr>
+      <tr><td><code>len(x)</code></td><td><code>array.length</code> · <code>lista.size()</code> · <code>texto.length()</code></td></tr>
+      <tr><td><code>int(t)</code> · <code>float(t)</code></td><td><code>Integer.parseInt(t)</code> · <code>Double.parseDouble(t)</code></td></tr>
+      <tr><td><code>t.strip()</code></td><td><code>t.trim()</code></td></tr>
+      <tr><td><code>a == b</code> (textos)</td><td><code>a.equals(b)</code> · <strong>nunca</strong> <code>==</code></td></tr>
+      <tr><td><code>a.lower() == b.lower()</code></td><td><code>a.equalsIgnoreCase(b)</code></td></tr>
+      <tr><td><code>[]</code> · <code>append</code></td><td><code>new ArrayList&lt;&gt;()</code> · <code>add</code></td></tr>
+      <tr><td><code>set()</code> · <code>x in s</code></td><td><code>new HashSet&lt;&gt;()</code> · <code>s.contains(x)</code></td></tr>
+      <tr><td><code>{}</code> · <code>d[k] = v</code></td><td><code>new HashMap&lt;&gt;()</code> · <code>m.put(k, v)</code></td></tr>
+      <tr><td><code>for i, x in enumerate(l):</code></td><td><code>for (int i = 0; i &lt; l.size(); i++)</code></td></tr>
+      <tr><td><code>try: … except ValueError:</code></td><td><code>try { … } catch (NumberFormatException e) { … }</code></td></tr>
+      <tr><td><code>raise ValueError("…")</code></td><td><code>throw new IllegalArgumentException("…");</code></td></tr>
+      <tr><td><code>isinstance(x, list)</code></td><td><code>x instanceof List&lt;?&gt;</code></td></tr>
+      <tr><td><code>input()</code> · <code>print()</code></td><td><code>sc.nextLine()</code> · <code>System.out.println()</code></td></tr>
+      <tr><td><code>True / False / None</code></td><td><code>true / false / null</code></td></tr>
+      <tr><td><code>and / or / not</code></td><td><code>&amp;&amp; / || / !</code></td></tr>
+      <tr><td><code>f"[{id}] {n}"</code></td><td><code>"[" + id + "] " + n</code> · <code>String.format("[%d] %s", id, n)</code></td></tr>
+      <tr><td><code>class Club:</code> + <code>__init__</code></td><td><code>class Club { … public Club(…) { } }</code></td></tr>
+      <tr><td><code>__str__</code></td><td><code>toString()</code> con <code>@Override</code></td></tr>
+    </table></div>
+  </div>
+</div>
+
+<!-- ═══════════════ RUTAS Y CARPETAS ═══════════════ -->
+<div class="panel" id="rutas" hidden>
+  <h2 class="panel-title">Rutas y carpetas</h2>
+  <div class="card">
+    <h3><span class="icon">P</span> Path: construir rutas</h3>
+    <p>Un <code>Path</code> es solo la <strong>dirección</strong>. Crearlo no crea nada ni comprueba que exista. <code>Files</code> es quien toca el disco.</p>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.nio.file.Path;
+
+      Path carpeta = Path.of("datos");                       // datos
+      Path archivo = carpeta.resolve("clubes.txt");          // datos/clubes.txt  (dentro de carpeta)
+      Path otro    = Path.of("datos", "copias", "a.bak");   // datos/copias/a.bak (une con el separador correcto)
+      Path hermano = archivo.resolveSibling("clubes.bak");   // datos/clubes.bak   (misma carpeta, otro nombre)
+    </script>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Método</th><th>Devuelve</th><th>Ejemplo con <code>datos/copias/a.bak</code></th></tr>
+      <tr><td><code>getFileName()</code></td><td>Solo el nombre final</td><td><code>a.bak</code></td></tr>
+      <tr><td><code>getParent()</code></td><td>La carpeta que lo contiene</td><td><code>datos/copias</code></td></tr>
+      <tr><td><code>getRoot()</code></td><td>Raíz (null si es relativa)</td><td><code>null</code></td></tr>
+      <tr><td><code>toAbsolutePath()</code></td><td>Ruta completa (no comprueba nada)</td><td><code>C:\...\datos\copias\a.bak</code></td></tr>
+      <tr><td><code>normalize()</code></td><td>Quita <code>.</code> y <code>..</code></td><td><code>datos/../x</code> → <code>x</code></td></tr>
+      <tr><td><code>isAbsolute()</code></td><td>¿Es absoluta?</td><td><code>false</code></td></tr>
+      <tr><td><code>toString()</code></td><td>Como texto</td><td><code>"datos\copias\a.bak"</code></td></tr>
+      <tr><td><code>toFile()</code></td><td>Lo convierte en <code>File</code> (lo piden <code>RandomAccessFile</code>, DOM, Jackson)</td><td></td></tr>
+      <tr><td><code>getFileName().toString().endsWith(".txt")</code></td><td>¿Tiene esa extensión?</td><td><code>false</code></td></tr>
+    </table></div>
+    <div class="tip"><strong>Relativas:</strong> se cuentan desde el directorio de trabajo (en VS Code, la carpeta abierta). Si «no encuentra el fichero», imprime <code>ruta.toAbsolutePath()</code> y mira dónde lo busca. Usa <code>/</code> o <code>Path.of("a", "b")</code>; las <code>\\</code> solo funcionan en Windows.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">?</span> Comprobar e informar</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Método</th><th>Qué hace</th><th>¿Lanza IOException?</th></tr>
+      <tr><td><code>Files.exists(r)</code></td><td><code>true</code> si existe</td><td>No</td></tr>
+      <tr><td><code>Files.notExists(r)</code></td><td><code>true</code> si seguro que no existe (sin permisos, ambos dan false)</td><td>No</td></tr>
+      <tr><td><code>Files.isDirectory(r)</code></td><td>¿Es una carpeta?</td><td>No</td></tr>
+      <tr><td><code>Files.isRegularFile(r)</code></td><td>¿Es un fichero normal?</td><td>No</td></tr>
+      <tr><td><code>Files.isReadable(r)</code> / <code>isWritable(r)</code></td><td>¿Se puede leer / escribir?</td><td>No</td></tr>
+      <tr><td><code>Files.size(r)</code></td><td>Tamaño en bytes (<code>long</code>)</td><td><strong>Sí</strong></td></tr>
+      <tr><td><code>Files.getLastModifiedTime(r)</code></td><td>Fecha de modificación (<code>FileTime</code>)</td><td><strong>Sí</strong></td></tr>
+      <tr><td><code>Files.isHidden(r)</code></td><td>¿Está oculto?</td><td><strong>Sí</strong></td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">+</span> Crear carpetas y ficheros</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Método</th><th>Si no existe</th><th>Si ya existe</th></tr>
+      <tr><td><code>Files.createDirectories(c)</code></td><td>Crea la carpeta <strong>y todas las de encima</strong></td><td>No hace nada ✅</td></tr>
+      <tr><td><code>Files.createDirectory(c)</code></td><td>Crea solo esa (la de encima debe existir)</td><td><code>FileAlreadyExistsException</code> ❌</td></tr>
+      <tr><td><code>Files.createFile(r)</code></td><td>Crea un fichero vacío</td><td><code>FileAlreadyExistsException</code> ❌</td></tr>
+    </table></div>
+    <p>Ejemplo del temario: crear la carpeta y el fichero si no existen, y mostrar información.</p>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.io.IOException;
+      import java.nio.file.Files;
+      import java.nio.file.Path;
+
+      public class Main {
+          public static void main(String[] args) {
+              Path carpeta = Path.of("datos");
+              Path archivo = carpeta.resolve("clubes.txt");
+              try {
+                  Files.createDirectories(carpeta);           // la carpeta (si falta)
+                  if (Files.notExists(archivo)) {
+                      Files.createFile(archivo);              // el fichero vacío (si falta)
+                  }
+                  System.out.println("Ruta: " + archivo.toAbsolutePath());
+                  System.out.println("¿Existe?: " + Files.exists(archivo));
+                  System.out.println("Tamaño: " + Files.size(archivo) + " bytes");
+              } catch (IOException e) {
+                  System.err.println("No se pudo acceder al archivo: " + e.getMessage());
+              }
+          }
+      }
+    </script>
+    <div class="tip"><strong>Truco:</strong> antes de escribir un fichero, <code>Files.createDirectories(ruta.getParent())</code> crea su carpeta, sea cual sea.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">ls</span> Listar el contenido de una carpeta</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.nio.file.DirectoryStream;
+
+      // 1) DirectoryStream (el del temario) — solo el primer nivel
+      try (DirectoryStream<Path> elementos = Files.newDirectoryStream(carpeta)) {
+          for (Path elemento : elementos) {
+              if (Files.isRegularFile(elemento)) {
+                  System.out.println("Fichero: " + elemento.getFileName());
+              } else if (Files.isDirectory(elemento)) {
+                  System.out.println("Carpeta: " + elemento.getFileName());
+              }
+          }
+      } catch (IOException e) {
+          System.err.println(e.getMessage());          // p. ej. si la carpeta no existe
+      }
+
+      // 2) Solo los que cumplen un patrón (glob)
+      try (DirectoryStream<Path> txts = Files.newDirectoryStream(carpeta, "*.txt")) {
+          for (Path p : txts) System.out.println(p.getFileName());
+      }
+
+      // 3) Files.list — devuelve un Stream (también hay que cerrarlo)
+      try (Stream<Path> s = Files.list(carpeta)) {      // import java.util.stream.Stream;
+          s.forEach(p -> System.out.println(p.getFileName()));
+      }
+
+      // 4) Files.walk — recorre TODAS las subcarpetas
+      try (Stream<Path> s = Files.walk(carpeta)) {
+          s.filter(Files::isRegularFile).forEach(System.out::println);
+      }
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">⧉</span> Copiar, mover, renombrar, borrar</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.nio.file.StandardCopyOption;
+
+      Files.copy(origen, destino, StandardCopyOption.REPLACE_EXISTING);   // copiar (sin la opción: falla si destino existe)
+      Files.move(origen, destino, StandardCopyOption.REPLACE_EXISTING);   // mover (el origen desaparece)
+      Files.move(ruta, ruta.resolveSibling("nuevo.txt"));                 // renombrar = mover en la misma carpeta
+      Files.delete(ruta);                // borrar: falla si no existe (NoSuchFileException)
+      Files.deleteIfExists(ruta);        // borrar sin error si no existe; devuelve true/false
+    </script>
+    <div class="warn"><strong>Ojo:</strong> <code>delete</code> en una carpeta solo funciona si está <strong>vacía</strong> (si no, <code>DirectoryNotEmptyException</code>). El borrado es irreversible: pide confirmación antes.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">F</span> La clase antigua File (por si aparece)</h3>
+    <p>Es la API vieja de <code>java.io</code>. El temario usa <code>Path</code>/<code>Files</code>, pero conviene reconocerla. Sus métodos <strong>no lanzan excepciones</strong>: devuelven <code>true</code>/<code>false</code>.</p>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th><code>File</code> (antigua)</th><th><code>Path</code> / <code>Files</code> (moderna)</th></tr>
+      <tr><td><code>new File("datos/a.txt")</code></td><td><code>Path.of("datos", "a.txt")</code></td></tr>
+      <tr><td><code>f.exists()</code></td><td><code>Files.exists(p)</code></td></tr>
+      <tr><td><code>f.mkdirs()</code></td><td><code>Files.createDirectories(p)</code></td></tr>
+      <tr><td><code>f.createNewFile()</code></td><td><code>Files.createFile(p)</code></td></tr>
+      <tr><td><code>f.isDirectory()</code> · <code>f.isFile()</code></td><td><code>Files.isDirectory(p)</code> · <code>Files.isRegularFile(p)</code></td></tr>
+      <tr><td><code>f.length()</code></td><td><code>Files.size(p)</code></td></tr>
+      <tr><td><code>f.listFiles()</code> (array <code>File[]</code>)</td><td><code>Files.newDirectoryStream(p)</code></td></tr>
+      <tr><td><code>f.getName()</code> · <code>f.getAbsolutePath()</code></td><td><code>p.getFileName()</code> · <code>p.toAbsolutePath()</code></td></tr>
+      <tr><td><code>f.delete()</code> · <code>f.renameTo(otro)</code></td><td><code>Files.delete(p)</code> · <code>Files.move(p, otro)</code></td></tr>
+      <tr><td><code>f.toPath()</code></td><td><code>p.toFile()</code></td></tr>
+    </table></div>
+  </div>
+</div>
+
+<!-- ═══════════════ LEER ═══════════════ -->
+<div class="panel" id="leer" hidden>
+  <h2 class="panel-title">Leer texto</h2>
+  <div class="card">
+    <h3><span class="icon">A</span> Línea a línea · BufferedReader</h3>
+    <p><code>lec</code> es un <strong>lector</strong> que avanza: cada <code>readLine()</code> da la siguiente línea (sin el salto); al final devuelve <code>null</code>.</p>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.io.BufferedReader;
+      import java.io.IOException;
+      import java.nio.charset.StandardCharsets;
+      import java.nio.file.Files;
+      import java.nio.file.Path;
+
+      Path ruta = Path.of("datos", "clubes.txt");
+      if (Files.notExists(ruta)) {
+          System.out.println("Todavía no hay datos.");
+          return;
+      }
+      try (BufferedReader lec = Files.newBufferedReader(ruta, StandardCharsets.UTF_8)) {
+          lec.readLine();                                  // salta la cabecera (si la hay)
+          String linea;
+          int numLinea = 1;                                // la cabecera era la 1
+          while ((linea = lec.readLine()) != null) {       // lee, guarda y comprueba que no sea el final
+              numLinea++;
+              if (linea.isBlank()) continue;               // ignorar líneas vacías
+              System.out.println(numLinea + ": " + linea);
+          }
+      } catch (IOException e) {
+          System.err.println("No se pudo leer: " + e.getMessage());
+      }
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">B</span> Todo de golpe · readAllLines</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      List<String> lineas = Files.readAllLines(ruta, StandardCharsets.UTF_8);   // lanza IOException
+
+      for (String linea : lineas) { }                       // for-each (como "for x in" de Python)
+
+      for (int i = 1; i < lineas.size(); i++) {             // con índice: desde 1 salta la cabecera
+          String linea = lineas.get(i);                     // número de línea real = i + 1
+      }
+
+      String todo = Files.readString(ruta, StandardCharsets.UTF_8);   // el fichero entero en un String
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">?</span> ¿Cuál uso?</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Situación</th><th>Mejor</th><th>Por qué</th></tr>
+      <tr><td>Mostrar o buscar</td><td><code>BufferedReader</code></td><td>No guardas nada; puedes parar con <code>break</code></td></tr>
+      <tr><td>Modificar / borrar líneas</td><td><code>readAllLines</code></td><td>Necesitas todas para reescribir</td></tr>
+      <tr><td>Fichero enorme</td><td><code>BufferedReader</code></td><td>Solo una línea en memoria</td></tr>
+      <tr><td>Contar registros</td><td>Cualquiera</td><td>Contador; no cuentes las vacías</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">#</span> Contar registros (sin líneas vacías)</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      int registros = 0;
+      for (String linea : Files.readAllLines(ruta, StandardCharsets.UTF_8)) {
+          if (!linea.isBlank()) registros++;
+      }
+      System.out.println("Hay " + registros + " registros");
+    </script>
+  </div>
+</div>
+
+<!-- ═══════════════ ESCRIBIR ═══════════════ -->
+<div class="panel" id="escribir" hidden>
+  <h2 class="panel-title">Escribir texto</h2>
+  <div class="card">
+    <h3><span class="icon">W</span> BufferedWriter · crea o SUSTITUYE</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.io.BufferedWriter;
+
+      Path ruta = Path.of("datos", "clubes.txt");
+      try {
+          Files.createDirectories(ruta.getParent());          // por si no existe la carpeta
+          try (BufferedWriter esc = Files.newBufferedWriter(ruta, StandardCharsets.UTF_8)) {
+              esc.write("1;Granada CF;Granada");
+              esc.newLine();                                  // write NO pone salto de línea
+              esc.write("2;Málaga CF;Málaga");
+              esc.newLine();
+          }
+      } catch (IOException e) {
+          System.err.println("No se pudo guardar: " + e.getMessage());
+      }
+    </script>
+    <div class="warn"><strong>Sin opciones, borra lo que hubiera.</strong> Abrir para escribir no significa añadir.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">+</span> Añadir al final · APPEND</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.nio.file.StandardOpenOption;
+
+      try (BufferedWriter esc = Files.newBufferedWriter(ruta, StandardCharsets.UTF_8,
+              StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
+          esc.write("4;Almería;Almería");
+          esc.newLine();
+      }
+    </script>
+    <p>Java no comprueba duplicados: si lo ejecutas tres veces, añade la línea tres veces. Evitarlo es cosa tuya.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">L</span> Escribir una lista de golpe · Files.write</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      List<String> nuevas = new ArrayList<>();
+      nuevas.add("id;nombre;ciudad");
+      nuevas.add("1;Granada CF;Granada");
+
+      Files.write(ruta, nuevas, StandardCharsets.UTF_8);                              // sustituye
+      Files.write(ruta, nuevas, StandardCharsets.UTF_8, StandardOpenOption.APPEND);   // añade al final
+
+      Files.writeString(ruta, "texto\n", StandardCharsets.UTF_8);                     // un String entero
+      Files.writeString(ruta, "otra\n", StandardCharsets.UTF_8,
+              StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    </script>
+    <p>Cada elemento de la lista va en su propia línea. Crea el fichero si no existe (no la carpeta).</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">⚙</span> Opciones de apertura (StandardOpenOption)</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Opción</th><th>Qué hace</th></tr>
+      <tr><td>(ninguna)</td><td>Crea si no existe; si existe, lo <strong>vacía</strong> y escribe</td></tr>
+      <tr><td><code>CREATE</code></td><td>Crea el fichero si no existe</td></tr>
+      <tr><td><code>CREATE_NEW</code></td><td>Lo crea; si ya existe, <strong>error</strong></td></tr>
+      <tr><td><code>APPEND</code></td><td>Escribe al final sin borrar</td></tr>
+      <tr><td><code>TRUNCATE_EXISTING</code></td><td>Vacía el fichero antes de escribir</td></tr>
+      <tr><td><code>WRITE</code></td><td>Abrir para escribir</td></tr>
+    </table></div>
+    <div class="tip"><strong>APPEND vs reescribir:</strong> alta → <code>APPEND</code>. Modificar/borrar → reescribir sin <code>APPEND</code>. Si usas <code>APPEND</code> para reescribir, el fichero se duplica.</div>
+  </div>
+</div>
+
+<!-- ═══════════════ CSV ═══════════════ -->
+<div class="panel" id="csv" hidden>
+  <h2 class="panel-title">CSV y validar</h2>
+  <div class="card">
+    <h3><span class="icon">✂</span> split: de línea a campos</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      String[] campos = linea.split(";", -1);
+      // "101;Hollow Knight;PC" → campos[0]="101"  campos[1]="Hollow Knight"  campos[2]="PC"
+      // TODO sale como String, también los números
+    </script>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Línea</th><th><code>split(";")</code></th><th><code>split(";", -1)</code></th></tr>
+      <tr><td><code>"101;Hollow Knight;PC"</code></td><td>3</td><td>3</td></tr>
+      <tr><td><code>"102;Celeste;"</code></td><td>2 (tira el vacío)</td><td>3 (último <code>""</code>)</td></tr>
+      <tr><td><code>"103;;"</code></td><td>1</td><td>3</td></tr>
+      <tr><td><code>""</code> (línea vacía)</td><td>1 (<code>""</code>)</td><td>1 (<code>""</code>)</td></tr>
+    </table></div>
+    <p>Separador con carácter especial de regex: <code>split("\\|")</code>, <code>split("\\.")</code>. Coma: <code>split(",", -1)</code>.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">✓</span> Validar una línea (orden correcto)</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      String[] campos = linea.split(";", -1);
+
+      if (campos.length != 3) {                          // 1. forma: SIEMPRE lo primero
+          System.out.println("Línea " + n + ": número de campos incorrecto");
+          continue;
+      }
+      int id, stock;
+      try {                                              // 2. números
+          id = Integer.parseInt(campos[0].trim());
+          stock = Integer.parseInt(campos[2].trim());
+      } catch (NumberFormatException e) {
+          System.out.println("Línea " + n + ": ID o stock no numérico");
+          continue;
+      }
+      String nombre = campos[1].trim();
+      if (id <= 0)           { System.out.println("Línea " + n + ": ID no positivo"); continue; }   // 3. rangos
+      if (stock < 0)         { System.out.println("Línea " + n + ": stock negativo"); continue; }
+      if (nombre.isEmpty())  { System.out.println("Línea " + n + ": nombre vacío");   continue; }   // 4. vacíos
+      if (!ids.add(id))      { System.out.println("Línea " + n + ": ID repetido");    continue; }   // 5. repetidos (Set)
+      // ✅ válida
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">#</span> Convertir</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Método</th><th>Hace</th><th>Si falla</th></tr>
+      <tr><td><code>Integer.parseInt(t)</code></td><td><code>"42"</code> → <code>42</code></td><td><code>NumberFormatException</code></td></tr>
+      <tr><td><code>Long.parseLong(t)</code></td><td>Número largo</td><td>ídem</td></tr>
+      <tr><td><code>Double.parseDouble(t)</code></td><td><code>"3.5"</code> → <code>3.5</code> (punto, no coma)</td><td>ídem</td></tr>
+      <tr><td><code>Boolean.parseBoolean(t)</code></td><td><code>"true"</code> → <code>true</code> (lo demás → false)</td><td>No falla</td></tr>
+      <tr><td><code>String.valueOf(n)</code> · <code>"" + n</code></td><td><code>42</code> → <code>"42"</code></td><td>—</td></tr>
+    </table></div>
+    <div class="tip"><strong>Variables y try:</strong> una variable declarada dentro del <code>try</code> no existe fuera. Si la necesitas después, declárala antes.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">Aa</span> Métodos de String</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Método</th><th>Hace</th></tr>
+      <tr><td><code>t.trim()</code></td><td>Quita espacios de los extremos (no los de en medio)</td></tr>
+      <tr><td><code>t.isEmpty()</code></td><td><code>true</code> si es <code>""</code></td></tr>
+      <tr><td><code>t.isBlank()</code></td><td><code>true</code> si es <code>""</code> o solo espacios</td></tr>
+      <tr><td><code>a.equals(b)</code></td><td>Mismo texto exacto</td></tr>
+      <tr><td><code>a.equalsIgnoreCase(b)</code></td><td>Mismo texto sin mirar mayúsculas</td></tr>
+      <tr><td><code>a.contains("x")</code></td><td>Contiene</td></tr>
+      <tr><td><code>a.startsWith("x")</code> · <code>endsWith("x")</code></td><td>Empieza / acaba por</td></tr>
+      <tr><td><code>t.toLowerCase()</code> · <code>toUpperCase()</code></td><td>Minúsculas / mayúsculas</td></tr>
+      <tr><td><code>t.length()</code></td><td>Nº de caracteres (con paréntesis)</td></tr>
+      <tr><td><code>t.charAt(i)</code></td><td>Carácter en la posición <code>i</code></td></tr>
+      <tr><td><code>t.substring(a, b)</code></td><td>Trozo de <code>a</code> a <code>b-1</code></td></tr>
+      <tr><td><code>t.replace("a", "b")</code></td><td>Reemplazar</td></tr>
+      <tr><td><code>t.indexOf("x")</code></td><td>Posición (o -1)</td></tr>
+    </table></div>
+    <div class="tip"><strong>Duplicados de texto:</strong> <code>a.trim().equalsIgnoreCase(b.trim())</code>. El <code>trim</code> en <strong>los dos</strong> lados.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">+</span> Montar líneas y mostrar</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      String s1 = "[" + id + "] " + nombre + " - " + plataforma;         // concatenar
+      String s2 = String.format("[%d] %s - %s", id, nombre, plataforma); // formato
+      String s3 = String.format("%.2f €", 12.5);                         // "12,50 €" (2 decimales)
+      String csv  = id + ";" + nombre + ";" + stock;                      // reconstruir línea CSV
+      String csv2 = String.join(";", campos);                             // unir un array con ;
+      System.out.printf("%-5d %-20s %5d%n", id, nombre, stock);           // tabla alineada
+    </script>
+    <p><code>%d</code> entero · <code>%s</code> texto · <code>%.2f</code> decimal · <code>%n</code> salto · <code>%-20s</code> ancho 20 alineado a la izquierda.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ CRUD ═══════════════ -->
+<div class="panel" id="crud" hidden>
+  <h2 class="panel-title">CRUD</h2>
+  <div class="card">
+    <h3><span class="icon">R</span> Consulta: buscar por ID</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      boolean encontrado = false;
+      try (BufferedReader lec = Files.newBufferedReader(ruta, StandardCharsets.UTF_8)) {
+          String linea;
+          while ((linea = lec.readLine()) != null) {
+              String[] c = linea.split(";", -1);
+              if (c.length != 3) continue;
+              int id;
+              try { id = Integer.parseInt(c[0]); } catch (NumberFormatException e) { continue; }
+              if (id == idBuscado) {
+                  System.out.println(c[1] + " (" + c[2] + ")");
+                  encontrado = true;
+                  break;                                   // ya está, no seguir leyendo
+              }
+          }
+      }
+      if (!encontrado) System.out.println("No existe el ID " + idBuscado);
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">U</span> Modificar (del temario)</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      List<String> originales = Files.readAllLines(ruta, StandardCharsets.UTF_8);
+      List<String> nuevas = new ArrayList<>();
+      boolean encontrado = false;
+
+      for (String linea : originales) {
+          String[] campos = linea.split(";", -1);
+          if (campos.length == 3 && campos[0].equals("2")) {
+              nuevas.add(campos[0] + ";" + campos[1] + ";Nueva ciudad");   // la buscada, cambiada
+              encontrado = true;
+          } else {
+              nuevas.add(linea);                                            // todas las demás, igual
+          }
+      }
+      if (encontrado) {
+          Files.write(ruta, nuevas, StandardCharsets.UTF_8);
+          System.out.println("Ciudad actualizada.");
+      } else {
+          System.out.println("No existe el club con ID 2.");
+      }
+    </script>
+    <div class="tip"><strong>Comprobación:</strong> nº de líneas antes = nº de líneas después. Cada línea entra en la lista <strong>exactamente una vez</strong> (por el <code>if</code> o por el <code>else</code>).</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">D</span> Baja: borrar por ID</h3>
+    <p>Igual que modificar, pero la buscada <strong>no se añade</strong>. Cabecera y líneas malas se copian tal cual.</p>
+    <script type="text/plain" class="code" data-lang="java">
+      for (String linea : originales) {
+          String[] c = linea.split(";", -1);
+          if (c.length == 3 && c[0].trim().equals(String.valueOf(idBorrar))) {
+              encontrado = true;          // no se añade → desaparece
+          } else {
+              nuevas.add(linea);
+          }
+      }
+    </script>
+    <p>Con objetos en memoria: <code>lista.removeIf(c -&gt; c.getId() == idBorrar)</code> (devuelve <code>true</code> si borró algo).</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">C</span> Alta sin duplicados</h3>
+    <ol>
+      <li>Leer y validar los datos del teclado: ID numérico y &gt; 0, textos no vacíos (<code>isBlank</code>), y guardarlos con <code>trim()</code>.</li>
+      <li>Si el fichero existe, recorrerlo: ¿mismo ID? ¿mismo nombre (<code>trim</code> + <code>equalsIgnoreCase</code>)? → error y salir.</li>
+      <li>Si todo bien: <code>createDirectories(ruta.getParent())</code> y escribir con <code>CREATE, APPEND</code>.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">⇄</span> Importar / filtrar a otro fichero</h3>
+    <ol>
+      <li><code>readAllLines</code> de la entrada.</li>
+      <li>Lista de válidas (con cabecera) + <code>Set&lt;Integer&gt;</code> de IDs aceptados.</li>
+      <li>Por cada línea: validar; si falla, «Línea N: motivo» y <code>continue</code>.</li>
+      <li>Si es válida: añadir a la lista y su ID al <code>Set</code>.</li>
+      <li><code>Files.write</code> a un fichero <strong>nuevo</strong>. Nunca sobre la entrada.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ═══════════════ COPIAS ═══════════════ -->
+<div class="panel" id="copias" hidden>
+  <h2 class="panel-title">Copias</h2>
+  <div class="card">
+    <h3><span class="icon">⧉</span> Crear copia (del temario)</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.nio.file.StandardCopyOption;
+
+      Path origen  = Path.of("datos", "clubes.txt");
+      Path destino = Path.of("datos", "copias", "clubes.bak");
+      try {
+          if (Files.notExists(origen)) {
+              System.out.println("No hay datos que copiar.");
+              return;
+          }
+          Files.createDirectories(destino.getParent());                    // datos/copias
+          Files.copy(origen, destino, StandardCopyOption.REPLACE_EXISTING);
+          System.out.println("Copia creada: " + destino.toAbsolutePath());
+      } catch (IOException e) {
+          System.err.println("No se pudo crear la copia: " + e.getMessage());
+      }
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">↺</span> Restaurar con confirmación</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      if (Files.notExists(copia)) {
+          System.out.println("No existe ninguna copia. Se conserva el archivo actual.");
+          return;
+      }
+      System.out.print("Se sustituirán los datos actuales. ¿Seguro? (s/n): ");
+      String resp = sc.nextLine().trim();
+      if (!resp.equalsIgnoreCase("s")) {
+          System.out.println("Restauración cancelada.");
+          return;
+      }
+      try {
+          Files.copy(copia, original, StandardCopyOption.REPLACE_EXISTING);   // al revés que la copia
+          System.out.println("Datos restaurados.");
+      } catch (IOException e) {
+          System.err.println("No se pudo restaurar: " + e.getMessage());
+      }
+    </script>
+    <div class="tip"><strong>Extra del temario:</strong> antes de restaurar, guarda también la versión actual (otra copia) y comprueba que la copia se puede interpretar (leerla y validar sus líneas).</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">⏱</span> Varias copias con fecha y hora</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.time.LocalDateTime;
+      import java.time.format.DateTimeFormatter;
+
+      String marca = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+      Path copia = Path.of("datos", "copias", "clubes_" + marca + ".bak");   // clubes_20261022_183000.bak
+      Files.copy(origen, copia);                                             // nombre único: no hace falta REPLACE
+    </script>
+  </div>
+</div>
+
+<!-- ═══════════════ POO ═══════════════ -->
+<div class="panel" id="poo" hidden>
+  <h2 class="panel-title">Clases (POO)</h2>
+  <div class="card">
+    <h3><span class="icon">C</span> Una clase de datos completa</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.io.Serializable;
+
+      public class Producto implements Serializable {        // implements Serializable solo si vas a guardarlo en binario
+          private static final long serialVersionUID = 1L;
+
+          private int id;                                     // atributos privados
+          private String nombre;
+          private double precio;
+          private int stock;
+
+          public Producto() { }                               // constructor vacío (lo necesita Jackson)
+
+          public Producto(int id, String nombre, double precio, int stock) {   // constructor con datos
+              this.id = id;                                   // this.id = el atributo; id = el parámetro
+              this.nombre = nombre;
+              this.precio = precio;
+              this.stock = stock;
+          }
+
+          public int getId() { return id; }                  // getters: consultar
+          public String getNombre() { return nombre; }
+          public double getPrecio() { return precio; }
+          public int getStock() { return stock; }
+
+          public void setId(int id) { this.id = id; }        // setters: cambiar
+          public void setNombre(String nombre) { this.nombre = nombre; }
+          public void setPrecio(double precio) { this.precio = precio; }
+          public void setStock(int stock) { this.stock = stock; }
+
+          @Override
+          public String toString() {                          // lo que sale en System.out.println(producto)
+              return id + " | " + nombre + " | " + precio + " € | stock " + stock;
+          }
+      }
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">→</span> Usarla</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      Producto p = new Producto(1, "Teclado", 29.99, 10);   // crear un objeto
+      System.out.println(p.getNombre());                     // Teclado
+      p.setStock(5);                                         // cambiar
+      System.out.println(p);                                 // usa toString()
+
+      List<Producto> productos = new ArrayList<>();
+      productos.add(p);
+      productos.add(new Producto(2, "Ratón", 15.5, 7));
+
+      // Pasar de línea CSV a objeto y al revés
+      Producto desdeCsv = new Producto(Integer.parseInt(c[0]), c[1], Double.parseDouble(c[2]), Integer.parseInt(c[3]));
+      String aCsv = p.getId() + ";" + p.getNombre() + ";" + p.getPrecio() + ";" + p.getStock();
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">R</span> record: clase de datos abreviada (Java 16+)</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      public record ClubJson(int id, String nombre, String ciudad) {}
+
+      ClubJson c = new ClubJson(1, "Granada CF", "Granada");
+      c.id();  c.nombre();  c.ciudad();          // se consultan así (sin "get"), y no tiene setters
+    </script>
+    <p>Genera solo el constructor, los métodos de consulta, <code>equals</code> y <code>toString</code>. Es <strong>inmutable</strong>: para «cambiar» un dato creas otro record.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">Aa</span> Vocabulario</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Palabra</th><th>Significa</th></tr>
+      <tr><td><code>private</code> / <code>public</code></td><td>Solo accesible desde la clase / desde cualquier sitio</td></tr>
+      <tr><td><code>static</code></td><td>Pertenece a la clase, no a cada objeto (se llama <code>Clase.metodo()</code>)</td></tr>
+      <tr><td><code>final</code></td><td>No se puede cambiar (constante)</td></tr>
+      <tr><td><code>this</code></td><td>El objeto actual</td></tr>
+      <tr><td><code>implements</code></td><td>La clase cumple una interfaz</td></tr>
+      <tr><td><code>@Override</code></td><td>Este método sustituye uno heredado o de la interfaz</td></tr>
+      <tr><td><code>void</code></td><td>El método no devuelve nada</td></tr>
+      <tr><td><code>throws IOException</code></td><td>Avisa: este método puede lanzar ese error, quien lo llame lo gestiona</td></tr>
+    </table></div>
+  </div>
+</div>
+
+<!-- ═══════════════ BINARIO ═══════════════ -->
+<div class="panel" id="binario" hidden>
+  <h2 class="panel-title">Binario</h2>
+  <div class="card">
+    <h3><span class="icon">S</span> Requisitos de la clase</h3>
+    <ul>
+      <li><code>implements Serializable</code> (import <code>java.io.Serializable</code>). Si no: <code>NotSerializableException</code>.</li>
+      <li><code>private static final long serialVersionUID = 1L;</code></li>
+      <li>Todos sus atributos deben ser serializables (<code>String</code>, <code>int</code>, listas… sí lo son).</li>
+      <li>Un atributo <code>transient</code> <strong>no</strong> se guarda (al leer vale 0/null).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">↓</span> Guardar la lista completa</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.io.ObjectOutputStream;
+
+      Path ruta = Path.of("datos", "productos.dat");
+      try {
+          Files.createDirectories(ruta.getParent());
+          try (ObjectOutputStream salida = new ObjectOutputStream(Files.newOutputStream(ruta))) {
+              salida.writeObject(productos);              // la LISTA entera como un único objeto
+          }
+          System.out.println("Guardado. Tamaño: " + Files.size(ruta) + " bytes");
+      } catch (IOException e) {
+          System.err.println("Error al guardar: " + e.getMessage());
+      }
+    </script>
+    <div class="warn"><strong>Nunca en modo APPEND.</strong> Cada <code>ObjectOutputStream</code> escribe una cabecera; si añades, quedan varias y al leer falla (<code>StreamCorruptedException</code>). Siempre se sustituye la lista entera.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">↑</span> Recuperar con comprobación de tipos</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.io.ObjectInputStream;
+
+      if (Files.notExists(ruta)) {
+          System.out.println("No hay productos guardados.");
+          return;
+      }
+      List<Producto> cargados = new ArrayList<>();
+      try (ObjectInputStream entrada = new ObjectInputStream(Files.newInputStream(ruta))) {
+          Object dato = entrada.readObject();
+          if (!(dato instanceof List<?> lista)) {                 // ¿es una lista?
+              System.out.println("El archivo no contiene una lista.");
+              return;
+          }
+          for (Object elemento : lista) {
+              if (!(elemento instanceof Producto p)) {           // ¿cada elemento es un Producto?
+                  System.out.println("Se ha encontrado un dato inesperado.");
+                  return;
+              }
+              cargados.add(p);
+          }
+      } catch (IOException | ClassNotFoundException e) {
+          System.err.println("No se pudo recuperar: " + e.getMessage());
+          return;                                                 // no seguir con datos a medias
+      }
+      // aquí ya puedes usar 'cargados'
+    </script>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Pieza</th><th>Qué es</th></tr>
+      <tr><td><code>Files.newOutputStream(r)</code> / <code>newInputStream(r)</code></td><td>Abre el fichero para escribir / leer <strong>bytes</strong></td></tr>
+      <tr><td><code>writeObject(x)</code> / <code>readObject()</code></td><td>Serializa / deserializa (devuelve <code>Object</code>)</td></tr>
+      <tr><td><code>x instanceof Tipo t</code></td><td>Comprueba el tipo y, si cuadra, lo guarda ya convertido en <code>t</code></td></tr>
+      <tr><td><code>List&lt;?&gt;</code></td><td>Lista de «no sé qué todavía»: por eso se comprueba cada elemento</td></tr>
+      <tr><td><code>ClassNotFoundException</code></td><td>Java no encuentra la clase para reconstruir el objeto</td></tr>
+      <tr><td><code>InvalidClassException</code></td><td>Has cambiado la clase (o el <code>serialVersionUID</code>) desde que se guardó</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">✎</span> Modificar y volver a guardar</h3>
+    <ol>
+      <li>Cargar la lista (como arriba). Si la lectura falla, <strong>no seguir</strong>.</li>
+      <li>Buscar por ID con un bucle; si lo encuentras, <code>p.setStock(nuevo)</code> y <code>encontrado = true</code>.</li>
+      <li>Solo si se encontró: volver a guardar la lista entera.</li>
+      <li>Comprobar: volver a cargar y ver que el cambio persiste.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">D</span> Tipos primitivos en binario (Data streams)</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.io.DataInputStream;
+      import java.io.DataOutputStream;
+
+      try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(ruta))) {
+          out.writeInt(10); out.writeUTF("Granada CF"); out.writeDouble(3.5); out.writeBoolean(true);
+      }
+      try (DataInputStream in = new DataInputStream(Files.newInputStream(ruta))) {
+          int id = in.readInt(); String n = in.readUTF(); double d = in.readDouble(); boolean b = in.readBoolean();
+          // se lee EN EL MISMO ORDEN en que se escribió
+      }
+    </script>
+  </div>
+</div>
+
+<!-- ═══════════════ ALEATORIO ═══════════════ -->
+<div class="panel" id="aleatorio" hidden>
+  <h2 class="panel-title">Acceso aleatorio</h2>
+  <div class="card">
+    <h3><span class="icon">i</span> Idea</h3>
+    <p>Con <code>RandomAccessFile</code> saltas a un byte concreto con <code>seek</code>. Para saber dónde empieza cada registro, todos deben medir <strong>lo mismo</strong>.</p>
+    <div class="warn"><strong>Apartado 7:</strong> la Relación 3 lo deja fuera, pero está en el temario.</div>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Tipo</th><th>Bytes</th><th>Leer / escribir</th></tr>
+      <tr><td><code>int</code></td><td>4</td><td><code>readInt()</code> / <code>writeInt()</code></td></tr>
+      <tr><td><code>long</code></td><td>8</td><td><code>readLong()</code> / <code>writeLong()</code></td></tr>
+      <tr><td><code>double</code></td><td>8</td><td><code>readDouble()</code> / <code>writeDouble()</code></td></tr>
+      <tr><td><code>boolean</code></td><td>1</td><td><code>readBoolean()</code> / <code>writeBoolean()</code></td></tr>
+      <tr><td><code>char</code></td><td>2</td><td><code>readChar()</code> / <code>writeChar()</code></td></tr>
+    </table></div>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Método</th><th>Qué hace</th></tr>
+      <tr><td><code>new RandomAccessFile(ruta.toFile(), "rw")</code></td><td>Abrir para leer y escribir (<code>"r"</code>: solo leer)</td></tr>
+      <tr><td><code>seek(pos)</code></td><td>Mover el cursor al byte <code>pos</code></td></tr>
+      <tr><td><code>length()</code></td><td>Tamaño del fichero en bytes</td></tr>
+      <tr><td><code>getFilePointer()</code></td><td>Posición actual del cursor</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">53</span> Registro de tamaño fijo (del temario)</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Campo</th><th>Tamaño</th><th>Desplazamiento</th></tr>
+      <tr><td>ID (<code>int</code>)</td><td>4</td><td>+0</td></tr>
+      <tr><td>Activo (<code>boolean</code>)</td><td>1</td><td>+4</td></tr>
+      <tr><td>Nombre (24 <code>char</code>)</td><td>48</td><td>+5</td></tr>
+      <tr><td><strong>Total</strong></td><td><strong>53</strong></td><td></td></tr>
+    </table></div>
+    <p><strong>Registro n empieza en</strong> <code>n × 53</code> (contando desde 0). Nº de registros = <code>length() / 53</code>. Si <code>length() % 53 != 0</code>, hay un registro incompleto. La <strong>posición no es el ID</strong>.</p>
+    <script type="text/plain" class="code" data-lang="java">
+      private static final int LONGITUD_NOMBRE = 24;
+      private static final int TAM_REGISTRO = 4 + 1 + LONGITUD_NOMBRE * 2;   // 53
+      private static final Path RUTA = Path.of("datos", "clubes.idx");
+
+      public static void anadir(int id, String nombre) throws IOException {
+          if (nombre.length() > LONGITUD_NOMBRE) throw new IllegalArgumentException("Nombre demasiado largo");
+          Files.createDirectories(RUTA.getParent());
+          try (RandomAccessFile f = new RandomAccessFile(RUTA.toFile(), "rw")) {
+              f.seek(f.length());                                    // al final
+              f.writeInt(id);
+              f.writeBoolean(true);
+              for (int i = 0; i < LONGITUD_NOMBRE; i++) {
+                  f.writeChar(i < nombre.length() ? nombre.charAt(i) : '\0');   // relleno con \0
+              }
+          }
+      }
+
+      public static void mostrar() throws IOException {
+          try (RandomAccessFile f = new RandomAccessFile(RUTA.toFile(), "r")) {
+              if (f.length() % TAM_REGISTRO != 0) throw new IOException("Registro incompleto");
+              for (long pos = 0; pos < f.length(); pos += TAM_REGISTRO) {
+                  f.seek(pos);
+                  int id = f.readInt();
+                  boolean activo = f.readBoolean();
+                  StringBuilder nombre = new StringBuilder();
+                  for (int i = 0; i < LONGITUD_NOMBRE; i++) {
+                      char letra = f.readChar();
+                      if (letra != '\0') nombre.append(letra);
+                  }
+                  System.out.println(id + " | " + nombre + " | Activo: " + activo);
+              }
+          }
+      }
+
+      public static void desactivarPosicion(int n) throws IOException {   // borrado lógico
+          try (RandomAccessFile f = new RandomAccessFile(RUTA.toFile(), "rw")) {
+              long inicio = (long) n * TAM_REGISTRO;
+              if (n < 0 || inicio + TAM_REGISTRO > f.length()) throw new IllegalArgumentException("Posición inexistente");
+              f.seek(inicio + 4);                                   // el boolean está tras los 4 bytes del ID
+              f.writeBoolean(false);
+          }
+      }
+    </script>
+    <div class="tip"><strong>Clave:</strong> en aleatorio modificas solo esos bytes, sin reescribir el fichero. «Desactivar» no borra físicamente: cambia la marca.</div>
+  </div>
+</div>
+
+<!-- ═══════════════ XML ═══════════════ -->
+<div class="panel" id="xml" hidden>
+  <h2 class="panel-title">XML</h2>
+  <div class="card">
+    <h3><span class="icon">&lt;&gt;</span> Estructura</h3>
+    <script type="text/plain" class="code" data-lang="xml">
+      <?xml version="1.0" encoding="UTF-8"?>
+      <productos>                              <!-- raíz: una sola, contiene todo -->
+          <producto id="1">                    <!-- elemento con atributo id -->
+              <nombre>Teclado mecánico</nombre>   <!-- elementos hijos con texto -->
+              <precio>29.99</precio>
+              <stock>10</stock>
+          </producto>
+      </productos>
+    </script>
+    <p>Caracteres especiales en el texto: <code>&amp;</code> → <code>&amp;amp;</code>, <code>&lt;</code> → <code>&amp;lt;</code>. DOM lo hace solo; por eso no se concatena a mano.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">↓</span> Exportar con DOM</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import javax.xml.parsers.DocumentBuilderFactory;
+      import javax.xml.transform.OutputKeys;
+      import javax.xml.transform.Transformer;
+      import javax.xml.transform.TransformerFactory;
+      import javax.xml.transform.dom.DOMSource;
+      import javax.xml.transform.stream.StreamResult;
+      import org.w3c.dom.Document;
+      import org.w3c.dom.Element;
+
+      // 1. Documento vacío
+      Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+      Element raiz = doc.createElement("productos");
+      doc.appendChild(raiz);
+
+      // 2. Un elemento por objeto
+      for (Producto p : productos) {
+          Element prod = doc.createElement("producto");
+          prod.setAttribute("id", String.valueOf(p.getId()));      // atributo (siempre String)
+
+          Element nombre = doc.createElement("nombre");
+          nombre.setTextContent(p.getNombre());                    // texto
+          prod.appendChild(nombre);                                // hijo de producto
+
+          Element precio = doc.createElement("precio");
+          precio.setTextContent(String.valueOf(p.getPrecio()));
+          prod.appendChild(precio);
+
+          Element stock = doc.createElement("stock");
+          stock.setTextContent(String.valueOf(p.getStock()));
+          prod.appendChild(stock);
+
+          raiz.appendChild(prod);                                  // producto, hijo de la raíz
+      }
+
+      // 3. Escribir el árbol en el fichero
+      Path ruta = Path.of("datos", "productos.xml");
+      Files.createDirectories(ruta.getParent());
+      Transformer t = TransformerFactory.newInstance().newTransformer();
+      t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+      t.setOutputProperty(OutputKeys.INDENT, "yes");
+      t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");   // 4 espacios
+      t.transform(new DOMSource(doc), new StreamResult(ruta.toFile()));
+    </script>
+    <p>Excepciones posibles: <code>ParserConfigurationException</code>, <code>TransformerException</code>, <code>IOException</code>. Puedes capturarlas juntas con <code>catch (Exception e)</code>.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">↑</span> Importar seguro y validando</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import org.w3c.dom.NodeList;
+
+      if (Files.notExists(ruta)) { System.out.println("No existe " + ruta); return; }
+      try {
+          DocumentBuilderFactory fab = DocumentBuilderFactory.newInstance();
+          // Seguridad: desactivar DTD y entidades externas ANTES de parse
+          fab.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+          fab.setFeature("http://xml.org/sax/features/external-general-entities", false);
+          fab.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+          fab.setXIncludeAware(false);
+          fab.setExpandEntityReferences(false);
+
+          Document doc = fab.newDocumentBuilder().parse(ruta.toFile());
+          NodeList nodos = doc.getElementsByTagName("producto");
+          List<Producto> temporal = new ArrayList<>();               // lista TEMPORAL
+          Set<Integer> ids = new HashSet<>();
+
+          for (int i = 0; i < nodos.getLength(); i++) {
+              Element e = (Element) nodos.item(i);
+              NodeList nombres = e.getElementsByTagName("nombre");
+              NodeList precios = e.getElementsByTagName("precio");
+              NodeList stocks  = e.getElementsByTagName("stock");
+              if (nombres.getLength() != 1 || precios.getLength() != 1 || stocks.getLength() != 1) {
+                  throw new IllegalArgumentException("Faltan campos en el producto " + (i + 1));
+              }
+              int id = Integer.parseInt(e.getAttribute("id").trim());
+              String nombre = nombres.item(0).getTextContent().trim();
+              double precio = Double.parseDouble(precios.item(0).getTextContent().trim());
+              int stock = Integer.parseInt(stocks.item(0).getTextContent().trim());
+
+              if (id <= 0 || nombre.isEmpty() || precio < 0 || stock < 0) {
+                  throw new IllegalArgumentException("Datos inválidos en el producto " + (i + 1));
+              }
+              if (!ids.add(id)) throw new IllegalArgumentException("ID duplicado: " + id);
+              temporal.add(new Producto(id, nombre, precio, stock));
+          }
+          productos = temporal;                // SOLO aquí, cuando todo ha ido bien
+          System.out.println("Importados " + productos.size() + " productos");
+      } catch (Exception e) {
+          System.err.println("No se pudo importar: " + e.getMessage());   // 'productos' sigue como estaba
+      }
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">≡</span> Métodos DOM</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Método</th><th>Qué hace</th></tr>
+      <tr><td><code>doc.createElement("x")</code></td><td>Crea una etiqueta <code>&lt;x&gt;</code></td></tr>
+      <tr><td><code>padre.appendChild(hijo)</code></td><td>Mete un elemento dentro de otro</td></tr>
+      <tr><td><code>el.setAttribute("id", "1")</code> / <code>getAttribute("id")</code></td><td>Poner / leer un atributo (si no existe → <code>""</code>)</td></tr>
+      <tr><td><code>el.setTextContent("…")</code> / <code>getTextContent()</code></td><td>Poner / leer el texto</td></tr>
+      <tr><td><code>x.getElementsByTagName("tag")</code></td><td><code>NodeList</code> con todas las etiquetas con ese nombre (en el documento o dentro de un elemento)</td></tr>
+      <tr><td><code>lista.getLength()</code> / <code>lista.item(i)</code></td><td>Cuántos hay / el de la posición <code>i</code> (<code>null</code> si no existe)</td></tr>
+      <tr><td><code>(Element) nodo</code></td><td>Convertir un <code>Node</code> a <code>Element</code> para usar sus métodos</td></tr>
+      <tr><td><code>doc.getDocumentElement()</code></td><td>La raíz</td></tr>
+      <tr><td><code>el.getChildNodes()</code></td><td>Hijos directos (incluye textos y saltos: filtra con <code>getNodeType() == Node.ELEMENT_NODE</code>)</td></tr>
+      <tr><td><code>doc.getDocumentElement().normalize()</code></td><td>Une nodos de texto partidos (recomendable tras <code>parse</code>)</td></tr>
+    </table></div>
+  </div>
+</div>
+
+<!-- ═══════════════ JSON ═══════════════ -->
+<div class="panel" id="json" hidden>
+  <h2 class="panel-title">JSON</h2>
+  <div class="card">
+    <h3><span class="icon">{ }</span> Estructura</h3>
+    <script type="text/plain" class="code" data-lang="json">
+      [
+        { "id": 1, "nombre": "Teclado mecánico", "precio": 29.99, "stock": 10 },
+        { "id": 2, "nombre": "Ratón", "precio": 15.5, "stock": 7 }
+      ]
+    </script>
+    <p><code>{ }</code> objeto (pares <code>"clave": valor</code>) · <code>[ ]</code> array · textos con comillas dobles · números sin comillas · <code>true</code>/<code>false</code>/<code>null</code>.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">M</span> Proyecto Maven + Jackson</h3>
+    <div class="tree">mi-proyecto/
+├── pom.xml
+├── datos/
+│   └── productos.json
+└── src/main/java/
+    ├── Producto.java
+    └── ProductosJson.java</div>
+    <script type="text/plain" class="code" data-lang="xml">
+      <?xml version="1.0" encoding="UTF-8"?>
+      <project xmlns="http://maven.apache.org/POM/4.0.0"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+          <modelVersion>4.0.0</modelVersion>
+          <groupId>es.dam</groupId>
+          <artifactId>productos-json</artifactId>
+          <version>1.0</version>
+
+          <properties>
+              <maven.compiler.release>17</maven.compiler.release>
+              <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+          </properties>
+
+          <dependencies>
+              <dependency>
+                  <groupId>com.fasterxml.jackson.core</groupId>
+                  <artifactId>jackson-databind</artifactId>
+                  <version>2.18.3</version>
+              </dependency>
+          </dependencies>
+      </project>
+    </script>
+    <div class="tip"><strong>Después de tocar el pom:</strong> recarga Maven en el IDE (en VS Code: «Java: Reload Projects» o el aviso que sale). La primera vez necesita Internet para descargar Jackson.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">⇄</span> Escribir y leer</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import com.fasterxml.jackson.core.type.TypeReference;
+      import com.fasterxml.jackson.databind.ObjectMapper;
+
+      ObjectMapper mapper = new ObjectMapper();
+      Path ruta = Path.of("datos", "productos.json");
+
+      // Escribir (bonito, con saltos e indentación)
+      Files.createDirectories(ruta.getParent());
+      mapper.writerWithDefaultPrettyPrinter().writeValue(ruta.toFile(), productos);
+
+      // Leer una LISTA
+      List<Producto> leidos = mapper.readValue(ruta.toFile(), new TypeReference<List<Producto>>() {});
+
+      // Leer UN objeto
+      Producto uno = mapper.readValue(ruta.toFile(), Producto.class);
+
+      // A / desde String
+      String json = mapper.writeValueAsString(productos);
+    </script>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Pieza</th><th>Para qué</th></tr>
+      <tr><td><code>ObjectMapper</code></td><td>Traduce objetos Java ↔ JSON</td></tr>
+      <tr><td><code>writerWithDefaultPrettyPrinter()</code></td><td>JSON legible, con saltos</td></tr>
+      <tr><td><code>TypeReference&lt;List&lt;Producto&gt;&gt;() {}</code></td><td>Le dice que esperas una <strong>lista de productos</strong>, no un solo objeto</td></tr>
+    </table></div>
+    <div class="warn"><strong>Requisitos de la clase para Jackson:</strong> constructor vacío público + getters y setters (o usar un <code>record</code>). Si no, error al leer.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">!</span> Importar sin perder datos</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      try {
+          List<Producto> temporal = mapper.readValue(ruta.toFile(), new TypeReference<List<Producto>>() {});
+          // validar cada uno: id > 0, nombre no vacío, precio >= 0, stock >= 0, ids sin repetir
+          for (Producto p : temporal) {
+              if (p.getId() <= 0 || p.getNombre() == null || p.getNombre().isBlank()
+                      || p.getPrecio() < 0 || p.getStock() < 0) {
+                  throw new IllegalArgumentException("Producto inválido: " + p);
+              }
+          }
+          productos = temporal;                          // solo si todo es válido
+      } catch (IOException e) {                          // JSON mal formado (coma, llave…)
+          System.err.println("JSON mal formado: " + e.getMessage());
+      } catch (IllegalArgumentException e) {
+          System.err.println(e.getMessage());
+      }
+    </script>
+    <p>Los errores de Jackson (<code>JsonProcessingException</code>, <code>StreamReadException</code>, <code>DatabindException</code>) son todos <code>IOException</code>.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ REPOSITORIOS ═══════════════ -->
+<div class="panel" id="repo" hidden>
+  <h2 class="panel-title">Repositorios</h2>
+  <div class="card">
+    <h3><span class="icon">I</span> La interfaz: el contrato</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.io.IOException;
+      import java.util.List;
+
+      public interface RepositorioProductos {
+          void guardarTodos(List<Producto> productos) throws IOException;
+          List<Producto> cargarTodos() throws IOException;
+      }
+    </script>
+    <p>Dice <strong>qué</strong> se puede hacer, no <strong>cómo</strong>. Cada clase que la implemente decide el formato.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">T</span> Implementación TXT</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      public class RepositorioTexto implements RepositorioProductos {
+          private final Path ruta;
+
+          public RepositorioTexto(Path ruta) { this.ruta = ruta; }
+
+          @Override
+          public void guardarTodos(List<Producto> productos) throws IOException {
+              Files.createDirectories(ruta.getParent());
+              List<String> lineas = new ArrayList<>();
+              for (Producto p : productos) {
+                  lineas.add(p.getId() + ";" + p.getNombre() + ";" + p.getPrecio() + ";" + p.getStock());
+              }
+              Files.write(ruta, lineas, StandardCharsets.UTF_8);
+          }
+
+          @Override
+          public List<Producto> cargarTodos() throws IOException {
+              List<Producto> lista = new ArrayList<>();
+              if (Files.notExists(ruta)) return lista;           // lista vacía, no error
+              for (String linea : Files.readAllLines(ruta, StandardCharsets.UTF_8)) {
+                  String[] c = linea.split(";", -1);
+                  if (c.length != 4) continue;                    // validar campos
+                  try {
+                      lista.add(new Producto(Integer.parseInt(c[0]), c[1],
+                              Double.parseDouble(c[2]), Integer.parseInt(c[3])));
+                  } catch (NumberFormatException e) {
+                      // línea mala: se ignora (o se avisa)
+                  }
+              }
+              return lista;
+          }
+      }
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">B</span> Implementación binaria</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      public class RepositorioBinario implements RepositorioProductos {
+          private final Path ruta;
+          public RepositorioBinario(Path ruta) { this.ruta = ruta; }
+
+          @Override
+          public void guardarTodos(List<Producto> productos) throws IOException {
+              Files.createDirectories(ruta.getParent());
+              try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(ruta))) {
+                  out.writeObject(new ArrayList<>(productos));
+              }
+          }
+
+          @Override
+          public List<Producto> cargarTodos() throws IOException {
+              List<Producto> lista = new ArrayList<>();
+              if (Files.notExists(ruta)) return lista;
+              try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(ruta))) {
+                  Object dato = in.readObject();
+                  if (!(dato instanceof List<?> l)) throw new IOException("No es una lista");
+                  for (Object o : l) {
+                      if (!(o instanceof Producto p)) throw new IOException("Elemento inesperado");
+                      lista.add(p);
+                  }
+              } catch (ClassNotFoundException e) {
+                  throw new IOException("Clase no encontrada", e);   // la convierte en IOException
+              }
+              return lista;
+          }
+      }
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">M</span> Main: solo habla con la interfaz</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      public class Main {
+          public static void main(String[] args) {
+              RepositorioProductos repo = new RepositorioTexto(Path.of("datos", "productos.txt"));
+              // RepositorioProductos repo = new RepositorioBinario(Path.of("datos", "productos.dat"));
+              //   ↑ cambiar de formato = cambiar SOLO esta línea
+
+              List<Producto> productos;
+              try {
+                  productos = repo.cargarTodos();
+              } catch (IOException e) {
+                  System.err.println("No se pudieron cargar: " + e.getMessage());
+                  productos = new ArrayList<>();
+              }
+              // ... menú que trabaja con 'productos' en memoria ...
+              try {
+                  repo.guardarTodos(productos);
+              } catch (IOException e) {
+                  System.err.println("No se pudo guardar: " + e.getMessage());
+              }
+          }
+      }
+    </script>
+    <div class="tip"><strong>Comprobación del enunciado:</strong> en <code>Main.java</code> no debe aparecer <code>Files</code>, <code>BufferedReader</code>, <code>BufferedWriter</code> ni <code>Path</code>… salvo la ruta al crear el repositorio (o pásala como <code>String</code> y que el repositorio haga el <code>Path.of</code>).</div>
+  </div>
+</div>
+
+<!-- ═══════════════ TECLADO ═══════════════ -->
+<div class="panel" id="teclado" hidden>
+  <h2 class="panel-title">Teclado y menú</h2>
+  <div class="card">
+    <h3><span class="icon">⌨</span> Leer siempre con nextLine</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      import java.util.Scanner;
+
+      Scanner sc = new Scanner(System.in);      // UNO para todo el programa
+      System.out.print("ID: ");
+      String texto = sc.nextLine().trim();
+      try {
+          int id = Integer.parseInt(texto);
+      } catch (NumberFormatException e) {
+          System.out.println("Eso no es un número");
+      }
+    </script>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Problema</th><th>Qué pasa</th><th>Solución</th></tr>
+      <tr><td>Escriben <code>abc</code> en <code>nextInt()</code></td><td><code>InputMismatchException</code></td><td><code>nextLine</code> + <code>parseInt</code></td></tr>
+      <tr><td><code>nextInt</code> y luego <code>nextLine</code></td><td>El <code>nextLine</code> da <code>""</code> (recoge el Enter)</td><td><code>sc.nextLine();</code> extra, o solo <code>nextLine</code></td></tr>
+      <tr><td>Cerrar <code>sc</code> pronto</td><td>Cierra <code>System.in</code>; ya no lees más</td><td>Cerrar al final del programa</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">f</span> Métodos de ayuda reutilizables</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      static int leerEntero(Scanner sc, String mensaje) {          // repite hasta que sea un número
+          while (true) {
+              System.out.print(mensaje);
+              try {
+                  return Integer.parseInt(sc.nextLine().trim());
+              } catch (NumberFormatException e) {
+                  System.out.println("Introduce un número entero.");
+              }
+          }
+      }
+
+      static String leerTexto(Scanner sc, String mensaje) {         // no admite vacío
+          while (true) {
+              System.out.print(mensaje);
+              String t = sc.nextLine().trim();
+              if (!t.isEmpty()) return t;
+              System.out.println("No puede estar vacío.");
+          }
+      }
+
+      static boolean confirmar(Scanner sc, String pregunta) {
+          System.out.print(pregunta + " (s/n): ");
+          return sc.nextLine().trim().equalsIgnoreCase("s");
+      }
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">≡</span> Menú que no se rompe</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      boolean salir = false;
+      while (!salir) {
+          System.out.println("""
+                  1) Alta   2) Listar   3) Buscar   4) Modificar
+                  5) Baja   6) Copia    7) Restaurar   0) Salir""");
+          String op = sc.nextLine().trim();
+          try {
+              switch (op) {
+                  case "1" -> alta(sc);
+                  case "2" -> listar();
+                  case "3" -> buscar(sc);
+                  case "0" -> salir = true;
+                  default  -> System.out.println("Opción no válida");
+              }
+          } catch (IOException e) {
+              System.err.println("Error de fichero: " + e.getMessage());   // el menú sigue
+          }
+      }
+    </script>
+    <div class="tip"><strong>Clave:</strong> cada opción en su propio método. Así un <code>return</code> dentro de <code>alta()</code> vuelve al menú en vez de cerrar el programa.</div>
+  </div>
+</div>
+
+<!-- ═══════════════ COLECCIONES ═══════════════ -->
+<div class="panel" id="colecciones" hidden>
+  <h2 class="panel-title">Listas / Set / Map</h2>
+  <div class="card">
+    <h3><span class="icon">[ ]</span> Array · List · Set · Map</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th></th><th><code>String[]</code></th><th><code>List&lt;T&gt;</code></th><th><code>Set&lt;T&gt;</code></th><th><code>Map&lt;K,V&gt;</code></th></tr>
+      <tr><td>Crear</td><td>lo da <code>split</code></td><td><code>new ArrayList&lt;&gt;()</code></td><td><code>new HashSet&lt;&gt;()</code></td><td><code>new HashMap&lt;&gt;()</code></td></tr>
+      <tr><td>Tamaño</td><td><code>.length</code></td><td><code>.size()</code></td><td><code>.size()</code></td><td><code>.size()</code></td></tr>
+      <tr><td>Leer</td><td><code>a[0]</code></td><td><code>l.get(0)</code></td><td>solo recorrer</td><td><code>m.get(clave)</code></td></tr>
+      <tr><td>Añadir</td><td>tamaño fijo</td><td><code>l.add(x)</code></td><td><code>s.add(x)</code> (false si ya estaba)</td><td><code>m.put(k, v)</code></td></tr>
+      <tr><td>¿Está?</td><td>recorrer</td><td><code>l.contains(x)</code></td><td><code>s.contains(x)</code> rápido</td><td><code>m.containsKey(k)</code></td></tr>
+      <tr><td>Quitar</td><td>—</td><td><code>l.remove(i)</code> · <code>removeIf(...)</code></td><td><code>s.remove(x)</code></td><td><code>m.remove(k)</code></td></tr>
+      <tr><td>Repetidos</td><td>sí</td><td>sí</td><td><strong>no</strong></td><td>claves no</td></tr>
+      <tr><td>Orden</td><td>sí</td><td>sí</td><td>no</td><td>no</td></tr>
+    </table></div>
+    <p>Genéricos con clases, no primitivos: <code>List&lt;Integer&gt;</code>, nunca <code>List&lt;int&gt;</code>. Imports: <code>java.util.*</code>.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">✓</span> Patrones</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      // ¿Lo he encontrado?
+      boolean encontrado = false;            // UNA vez, antes del bucle
+      for (Producto p : productos) {
+          if (p.getId() == id) { encontrado = true; break; }   // dentro solo a true
+      }
+      if (!encontrado) System.out.println("No existe");       // se mira DESPUÉS
+
+      // Buscar y quedarte con el objeto
+      Producto hallado = null;
+      for (Producto p : productos) if (p.getId() == id) { hallado = p; break; }
+      if (hallado == null) System.out.println("No existe"); else hallado.setStock(5);
+
+      // ¿Ya lo había visto?
+      Set<Integer> vistos = new HashSet<>();
+      if (!vistos.add(id)) { /* repetido */ }    // add da false si ya estaba
+
+      // Borrar de una lista de objetos
+      boolean borrado = productos.removeIf(p -> p.getId() == id);
+
+      // Ordenar
+      productos.sort(Comparator.comparingInt(Producto::getId));          // por ID
+      productos.sort(Comparator.comparing(Producto::getNombre));         // por nombre
+
+      // Contar / sumar
+      int total = 0;
+      for (Producto p : productos) total += p.getStock();
+    </script>
+  </div>
+</div>
+
+<!-- ═══════════════ EXCEPCIONES ═══════════════ -->
+<div class="panel" id="errores" hidden>
+  <h2 class="panel-title">Excepciones</h2>
+  <div class="card">
+    <h3><span class="icon">try</span> Formas de try</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      try { ... } catch (NumberFormatException e) { ... }                      // normal (= try/except)
+
+      try (BufferedReader lec = ...) { ... } catch (IOException e) { ... }    // con recursos: se cierra solo (= with)
+
+      try { ... } catch (IOException | ClassNotFoundException e) { ... }       // multi-catch
+
+      try { ... } catch (Exception e) { ... } finally { /* se ejecuta SIEMPRE */ }
+
+      throw new IllegalArgumentException("Nombre demasiado largo");            // lanzar tú un error
+
+      public static void guardar() throws IOException { ... }                  // avisar de que puede fallar
+    </script>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">⚠</span> Las que te vas a encontrar</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Excepción</th><th>Cuándo</th><th>Cómo</th></tr>
+      <tr><td><code>IOException</code></td><td>Cualquier fallo de disco</td><td>Java obliga a capturarla o declararla con <code>throws</code></td></tr>
+      <tr><td><code>NoSuchFileException</code></td><td>La ruta no existe</td><td><code>Files.exists</code> antes</td></tr>
+      <tr><td><code>FileAlreadyExistsException</code></td><td><code>createFile</code>/<code>createDirectory</code>/<code>copy</code> sin REPLACE</td><td><code>createDirectories</code> · <code>REPLACE_EXISTING</code></td></tr>
+      <tr><td><code>DirectoryNotEmptyException</code></td><td>Borrar una carpeta con cosas</td><td>Vaciarla antes</td></tr>
+      <tr><td><code>NumberFormatException</code></td><td><code>parseInt</code> sin número</td><td><code>try/catch</code></td></tr>
+      <tr><td><code>ArrayIndexOutOfBoundsException</code></td><td><code>campos[2]</code> y hay menos</td><td>Comprobar <code>length</code> antes</td></tr>
+      <tr><td><code>InputMismatchException</code></td><td><code>nextInt</code> con texto</td><td>Usar <code>nextLine</code></td></tr>
+      <tr><td><code>NullPointerException</code></td><td>Usar algo que vale <code>null</code></td><td>Comprobar <code>!= null</code></td></tr>
+      <tr><td><code>ClassNotFoundException</code></td><td><code>readObject</code> no encuentra la clase</td><td>Multi-catch con <code>IOException</code></td></tr>
+      <tr><td><code>NotSerializableException</code></td><td>La clase no implementa <code>Serializable</code></td><td>Añadir <code>implements Serializable</code></td></tr>
+      <tr><td><code>InvalidClassException</code></td><td>Cambiaste la clase tras guardar</td><td>Volver a generar el <code>.dat</code></td></tr>
+      <tr><td><code>StreamCorruptedException</code></td><td><code>ObjectOutputStream</code> en APPEND</td><td>Guardar siempre la lista entera</td></tr>
+      <tr><td><code>SAXParseException</code></td><td>XML mal formado</td><td><code>catch (Exception e)</code> y conservar datos</td></tr>
+      <tr><td><code>JsonProcessingException</code></td><td>JSON mal formado</td><td>Es <code>IOException</code></td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">↷</span> Salir de un bucle o método</h3>
+    <div class="table-wrap"><table class="ref-table">
+      <tr><th>Palabra</th><th>Hace</th></tr>
+      <tr><td><code>continue;</code></td><td>Salta a la siguiente vuelta (descarta esta línea)</td></tr>
+      <tr><td><code>break;</code></td><td>Sale del bucle</td></tr>
+      <tr><td><code>return;</code></td><td>Sale del método (en <code>main</code>, acaba el programa)</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">⌕</span> Leer un error</h3>
+    <script type="text/plain" class="code" data-lang="plaintext">
+      Exception in thread "main" java.lang.NumberFormatException: For input string: "id"   ← QUÉ y CON QUÉ
+          at java.base/java.lang.Integer.parseInt(Integer.java:668)                        ← código de Java: ignorar
+          at ejercicio4.main(ejercicio4.java:30)                                           ← DÓNDE: tu fichero, línea 30
+    </script>
+  </div>
+</div>
+
+<!-- ═══════════════ FALLOS ═══════════════ -->
+<div class="panel" id="fallos" hidden>
+  <h2 class="panel-title">Fallos típicos</h2>
+  <div class="card">
+    <h3><span class="icon">⚠</span> Resetear el booleano dentro del bucle</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      // MAL: si el bueno no es el último, acaba en false
+      if (coincide) { encontrado = true; } else { encontrado = false; }
+      // BIEN: false antes del bucle; dentro solo true
+      if (coincide) { encontrado = true; }
+    </script>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> Apartar las líneas buenas en vez de las malas</h3>
+    <p><code>if (campos.length == 3) { add; continue; }</code> salta las buenas antes de compararlas. Lo correcto es <code>!= 3</code>.</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> Añadir dos veces la misma línea</h3>
+    <p>Cada línea debe entrar en la lista <strong>una vez</strong>: o por el <code>if</code> o por el <code>else</code>. Tras un <code>add</code> de una línea mala, <code>continue</code>.</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> add antes de contains en el Set</h3>
+    <p>Si apuntas el ID y luego preguntas si está, siempre dirá que sí. Primero <code>contains</code>, después <code>add</code> (o directamente <code>if (!set.add(id))</code>).</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> Cambiar una variable y añadir la línea original</h3>
+    <p><code>stock = nuevo; lista.add(linea);</code> → guarda el stock viejo. Hay que montar la línea nueva: <code>c[0] + ";" + c[1] + ";" + nuevo</code>.</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> APPEND al reescribir</h3>
+    <p>Para modificar o borrar, si escribes la lista con <code>APPEND</code>, el fichero se duplica (6 + 6 líneas).</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> Escribir aunque no se encontró / sobre la entrada</h3>
+    <p><code>Files.write</code> dentro de <code>if (encontrado)</code>. Al filtrar, escribir en un fichero <strong>nuevo</strong>.</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> Usar campos antes de contarlos</h3>
+    <p>Comprueba <code>campos.length</code> antes de leer <code>campos[1]</code> o <code>campos[2]</code>.</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> Comparar textos con ==</h3>
+    <script type="text/plain" class="code" data-lang="java">
+      if (opcion == "1")  ...      // MAL: compara objetos
+      if (opcion.equals("1")) ...  // BIEN
+    </script>
+    <p>Lo mismo con <code>Integer == Integer</code> (objetos): usa <code>int</code> o <code>.equals</code>.</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> trim solo en un lado</h3>
+    <p><code>nuevo.trim().equalsIgnoreCase(delFichero.trim())</code>.</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> Validar pero no parar</h3>
+    <p>Un <code>if</code> que muestra el error sin <code>return</code>/<code>continue</code> deja seguir al programa con datos malos.</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> isBlank no limpia</h3>
+    <p><code>isBlank()</code> pregunta; <code>trim()</code> limpia. Guarda los textos con <code>trim()</code>.</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> catch vacío</h3>
+    <p>Un <code>catch</code> sin nada esconde el error: el programa parece que funciona. Pon al menos un mensaje.</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> return en main dentro de un menú</h3>
+    <p>Cierra el programa entero. Mete cada opción en un método.</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> Rutas absolutas o con \\</h3>
+    <p>Solo funcionan en tu equipo. Usa <code>Path.of("datos", "x.csv")</code>.</p>
+  </div>
+  <div class="card">
+    <h3><span class="icon">⚠</span> Sustituir los datos durante una importación</h3>
+    <p>Valida todo en una lista temporal; si algo falla, los datos anteriores no se tocan.</p>
+  </div>
+</div>
+
+<p class="empty" id="no-results" hidden>No hay nada que coincida con la búsqueda.</p>
+
+<script>
+  // Resaltado propio (sin librerías: funciona sin Internet)
+  const KW = new Set('abstract assert boolean break byte case catch char class const continue default do double else enum extends final finally float for if implements import instanceof int interface long native new package private protected public record return short static super switch synchronized this throw throws transient try var void volatile while true false null'.split(' '));
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function hlJava(src) {
+    const re = /("""[\s\S]*?"""|"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])+'|\/\/[^\n]*|\/\*[\s\S]*?\*\/|@\w+|\b\d+(?:\.\d+)?[LlFfDd]?\b|\b[A-Za-z_]\w*\b)/g;
+    let out = '', last = 0, m;
+    while ((m = re.exec(src))) {
+      out += esc(src.slice(last, m.index)); const t = m[0]; let c = '';
+      if (t[0] === '"' || t[0] === "'") c = 'hljs-string';
+      else if (t.startsWith('//') || t.startsWith('/*')) c = 'hljs-comment';
+      else if (t[0] === '@') c = 'hljs-meta';
+      else if (/^\d/.test(t)) c = 'hljs-number';
+      else if (KW.has(t)) c = 'hljs-keyword';
+      else if (/^[A-Z]/.test(t) && !/^[A-Z0-9_]+$/.test(t)) c = 'hljs-type';
+      out += c ? '<span class="' + c + '">' + esc(t) + '</span>' : esc(t);
+      last = re.lastIndex;
+    }
+    return out + esc(src.slice(last));
+  }
+  function hlXml(src) {
+    return esc(src).replace(/(&lt;\/?)([\w:.-]+)/g, '$1<span class="hljs-name">$2</span>')
+      .replace(/([\w:-]+)=(&quot;|")([^"]*)"/g, '<span class="hljs-attr">$1</span>=<span class="hljs-string">"$3"</span>');
+  }
+  function hlJson(src) {
+    return esc(src).replace(/"(?:\\.|[^"\\])*"/g, s => '<span class="hljs-string">' + s + '</span>')
+      .replace(/\b(-?\d+(?:\.\d+)?)\b/g, '<span class="hljs-number">$1</span>')
+      .replace(/\b(true|false|null)\b/g, '<span class="hljs-keyword">$1</span>');
+  }
+  document.querySelectorAll('script.code').forEach(s => {
+    let lines = s.textContent.replace(/^\n+|\s+$/g, '').split('\n');
+    const indents = lines.filter(l => l.trim()).map(l => l.match(/^ */)[0].length);
+    const min = indents.length ? Math.min(...indents) : 0;
+    const text = lines.map(l => l.slice(min)).join('\n');
+    const lang = s.dataset.lang || 'plaintext';
+    const wrap = document.createElement('div'); wrap.className = 'codewrap';
+    const pre = document.createElement('pre'); const code = document.createElement('code');
+    code.innerHTML = lang === 'java' ? hlJava(text) : lang === 'xml' ? hlXml(text) : lang === 'json' ? hlJson(text) : esc(text);
+    pre.appendChild(code);
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'copy'; btn.textContent = 'Copiar';
+    btn.addEventListener('click', () => {
+      const done = ok => { btn.textContent = ok ? 'Copiado ✓' : 'Seleccionado: Ctrl+C'; setTimeout(() => btn.textContent = 'Copiar', 1800); };
+      const select = () => { const r = document.createRange(); r.selectNodeContents(code); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); done(false); };
+      try { navigator.clipboard.writeText(text).then(() => done(true), select); } catch (e) { select(); }
+    });
+    wrap.appendChild(btn); wrap.appendChild(pre);
+    s.replaceWith(wrap);
+  });
+
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.panel');
+  const input = document.getElementById('buscar');
+  const info = document.getElementById('search-info');
+  const noResults = document.getElementById('no-results');
+  let current = 'plantillas';
+
+  function show(name) {
+    current = name;
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    panels.forEach(p => { p.hidden = p.id !== name; });
+    document.querySelectorAll('.card').forEach(c => c.hidden = false);
+    try { localStorage.setItem('chuleta-tab2', name); } catch (e) {}
+  }
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    if (input.value) { input.value = ''; search(''); }
+    show(tab.dataset.tab);
+    window.scrollTo({ top: 0 });
+  }));
+
+  function search(q) {
+    q = q.trim().toLowerCase();
+    if (!q) {
+      document.body.classList.remove('searching');
+      info.hidden = true; noResults.hidden = true;
+      show(current);
+      return;
+    }
+    document.body.classList.add('searching');
+    tabs.forEach(t => t.classList.remove('active'));
+    let total = 0;
+    panels.forEach(p => {
+      let any = false;
+      p.querySelectorAll('.card').forEach(c => {
+        const hit = c.textContent.toLowerCase().includes(q);
+        c.hidden = !hit; if (hit) { any = true; total++; }
+      });
+      p.hidden = !any;
+    });
+    info.hidden = false;
+    info.textContent = total + (total === 1 ? ' tarjeta' : ' tarjetas') + ' con «' + q + '». Borra la búsqueda o pulsa una pestaña para volver.';
+    noResults.hidden = total > 0;
+  }
+  input.addEventListener('input', () => search(input.value));
+
+  let start = 'plantillas';
+  try { const saved = localStorage.getItem('chuleta-tab2'); if (saved && document.getElementById(saved)) start = saved; } catch (e) {}
+  const hash = location.hash.slice(1);
+  if (hash && document.getElementById(hash) && document.getElementById(hash).classList.contains('panel')) start = hash;
+  show(start);
+</script>
