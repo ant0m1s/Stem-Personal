@@ -1,0 +1,41 @@
+Odoo
+PASOS A SEGUIR
+A1. Contactos - IMPORTAR CSV
+- Comprueba CSV
+- Ve Contactos, pulsa el menú engranaje y 'Importar registros'
+- Sube el archivo
+- Compruebas las columnas y pulsa 'Probar' para comprobar el archivo
+- Si no aparece ningún error pulsa 'Importar'
+- Ve a Contactos, busca 'EX26' y asegúrate que salen las nuevas.
+- Márcalas como 'Compañía'.
+
+A2. CRM - CREAR OPORTUNIDAD
+- Ir CRM y Pulsa Nuevo
+- Rellena los datos, Oportunidad *ejemplo* OBLIGATORIO
+- Pulsa 'Editar' importante no 'Añadir' para abrir ficha completa
+- En panel de mensajes pulsa 'Actividades'
+- Rellena los campos y pulsa 'Programar' para que este pendiente
+
+A3. Ventas - CREAR PRODUCTO Y PRESUPUESTO
+- Ve a 'Ventas' y a la sección Productos
+- Presiona Nuevo y rellena los datos
+- Guardalo pulsando la nube
+Crear Presupuesto
+- Vuelve a CRM y abre la 'Oportunidad anterior'
+- Presiona 'Nuevo Presupuesto'
+- Pulsa 'Añadir un producto' y créalo.
+- Guarda pulsando la nube.
+
+A4. Proyecto - CREAR PROYECTO
+- Ve a 'Proyecto' y pulsa 'Nuevo'
+- Configuralo y créalo para seguir.
+- Pulsa 'Etapa'
+- Crea una columna y dentro crea la tarea.
+- Para saber si se ha creado correctamente tiene que pasar de 0 a 1.
+
+Exportar CSV
+- Busca 'Contactos' y busca 'EX26'
+- Cambia de vista, pulsando el icono de las tres rayas y selecciónalos
+- Pulsa 'Acciones' y 'Exportar'
+- Cambia los campos a exportar y ordénalos.
+- Por último, descárgalo.
